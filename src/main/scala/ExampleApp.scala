@@ -1,10 +1,10 @@
-/* SimpleApp.scala */
+
 import org.apache.spark.sql.SparkSession
 
-object ExampleApp {
+object ParallelSGDApp {
 
   def main(args: Array[String]) {
-    val logFile = "README.md"
+    val logFile = "text.txt"
 
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
 
