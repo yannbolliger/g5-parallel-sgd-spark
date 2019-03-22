@@ -11,13 +11,18 @@ class SVM(
 
   def initialWeights: Vector[Double] = Vector.fill(dimension)(0)
 
-  def fit(
-      data: RDD[SparseVector],
+  def gradient: SparseVector = ???
+
+  def fitEpoch(
+      data: RDD[(Int, SparseVector)],
       weights: Vector[Double]
   ): Vector[Double] = {
 
     data
       .sample(withReplacement = false, fraction = batchFraction)
       .map(x => gradient(x, weights))
+
+    // TODO: calculate gradients (KYLE)
+    // TODO: average gradients
   }
 }
