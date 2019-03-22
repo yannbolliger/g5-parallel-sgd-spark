@@ -1,3 +1,4 @@
+package com.github.yannbolliger.g5.parallel.sgd.spark
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.SparkContext
