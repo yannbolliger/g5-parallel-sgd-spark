@@ -19,7 +19,7 @@ class LoadData {
     // format :: RDD[(Int, Vector[Double])], labels: RDD[(Int, Boolean)]
 
 
-    val test_files = s"${data_directory}lyrl2004_vectors_test_pt1.dat.gz"
+    val test_files = s"${data_directory}lyrl2004_vectors_test_pt0.dat.gz"
     val test = spark.read.textFile(test_files)
 
     val train = spark.read.textFile(data_directory + "lyrl2004_vectors_train.dat.gz")
