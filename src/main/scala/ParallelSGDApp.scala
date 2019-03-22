@@ -1,8 +1,9 @@
 
 import org.apache.spark.sql.SparkSession
 
-object ParallelSGDApp {
+object ParallelSGDApp extends App {
 
+  override
   def main(args: Array[String]) {
     val logFile = "text.txt"
 
