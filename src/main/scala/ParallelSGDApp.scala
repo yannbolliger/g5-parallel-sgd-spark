@@ -8,9 +8,9 @@ import systems.LoadData
 import org.apache.log4j.Logger
 import org.apache.log4j.Level
 
-object ParallelSGDApp {
+object ParallelSGDApp extends App {
 
-
+  override
   def main(args: Array[String]) {
 
     Logger.getLogger("org").setLevel(Level.OFF)
@@ -34,7 +34,6 @@ object ParallelSGDApp {
     println(test.count())
     println(train.count())
     println(topics.count())
-
 
 
     // val logData = spark.read.textFile(logFile).cache()
