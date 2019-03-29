@@ -12,12 +12,23 @@ object Settings {
   )(implicit convert: String => A): A =
     sys.env.get(key).map(convert(_)).getOrElse(default)
 
-  val dataPath = getFromEnvOrDefault("DATA_PATH", "resources")
-
+  /**
+    * Spark, system parameters
+    */
   val numberWorkers: Int = getFromEnvOrDefault[Int]("N_WORKERS", 4)
 
   val envLocal: Boolean = getFromEnvOrDefault("RUN_LOCAL", true)
 
+  /**
+    * Data parameters
+    */
+  val dataPath: String = getFromEnvOrDefault("DATA_PATH", "resources/rcv1")
+
+  val topicKey: String = getFromEnvOrDefault("TOPIC_KEY", "CCAT")
+
+  /**
+    * SGD parameters
+    */
   val batchFraction: Double = getFromEnvOrDefault("BATCH_FRACTION", 0.1)
 
   val validationSplit: Double = getFromEnvOrDefault("VALIDATION_SPLIT", 0.1)

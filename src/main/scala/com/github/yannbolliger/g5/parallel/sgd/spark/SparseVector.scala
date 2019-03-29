@@ -22,8 +22,7 @@ class SparseVector(vectorMap: Map[Int, Double]) {
 
   def *(vector: Vector[Double]): SparseVector = {
     val newMap = vectorMap.map {
-      case (key, value) =>
-        (key, vector(key) * value)
+      case (key, value) => (key, vector(key) * value)
     }
 
     SparseVector(newMap)
