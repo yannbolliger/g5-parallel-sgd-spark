@@ -2,13 +2,24 @@ package com.github.yannbolliger.g5.parallel.sgd.spark
 
 class SparseVector(vectorMap: Map[Int, Double]) {
 
+  def size: Int = {
+    vectorMap.size
+  }
+
+  def getKeys: Iterable[Int] = {
+    vectorMap.keys
+  }
+
   def +(scalar: Double): SparseVector =
     SparseVector(vectorMap.mapValues(_ + scalar))
 
   def -(scalar: Double): SparseVector = this + (-1 * scalar)
 
   def *(scalar: Double): SparseVector =
-    SparseVector(vectorMap.mapValues(_ * scalar))
+  SparseVector(vectorMap.mapValues(_ * scalar))
+
+  def /(scalar: Double): SparseVector = this * (1 / scalar)
+
 
   def +(other: SparseVector): SparseVector = {
     val newMap = (vectorMap.toSeq ++ other.vectorMap.toSeq)
@@ -27,6 +38,13 @@ class SparseVector(vectorMap: Map[Int, Double]) {
     }
 
     SparseVector(newMap)
+  }
+
+  def +(vector: Vector[Double]): Vector[Double] = {
+    val newVector = vector.zipWithIndex.map {
+      case (value, idx) => value + vectorMap.getOrElse(idx, 0)
+    }
+    newVector
   }
 
 }
