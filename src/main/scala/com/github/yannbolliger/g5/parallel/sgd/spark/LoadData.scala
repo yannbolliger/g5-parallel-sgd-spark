@@ -1,32 +1,34 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
 
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
-
-// val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
-
-// val conf = new SparkConf().setAppName("g5-parallel-sgd-spark").setMaster("local")
-// new SparkContext(conf)
 
 object LoadData {
 
   def load(
-      spark: SparkSession,
-      data_directory: String
-  ): (RDD[String], RDD[String], RDD[String]) = {
+      sc: SparkContext
+  ): (RDD[(Int, SparseVector, Boolean)], RDD[(Int, SparseVector, Boolean)]) = {
 
-    println("Return data ...")
+    val trainDataRaw = sc.textFile(Settings.trainFileName)
+    val testDataRaw = sc.textFile(Settings.testFileNames)
+    val topicsDataRaw = sc.textFile(Settings.topicsFileName)
 
-    val test_files = s"${data_directory}lyrl2004_vectors_test_pt0.dat.gz"
-    val test = spark.read.textFile(test_files)
+    val trainVectors = trainDataRaw.map(SparseVector.fromString(_))
+    val testVectors = testDataRaw.map(SparseVector.fromString(_))
 
-    val train =
-      spark.read.textFile(data_directory + "lyrl2004_vectors_train.dat.gz")
-    val topics = spark.read.textFile(data_directory + "rcv1-v2.topics.qrels.gz")
+    val idsLabels: RDD[(Int, Boolean)] = for (line <- topicsDataRaw)
+      yield {
+        val topic :: id :: _ = line.split(" ").toList
 
-    // TODO: take care of labels here (YANN)
+        (id.toInt, topic == Settings.topicKey)
+      }
 
-    (test, train, topics)
+    def joinWithLabels(
+        data: RDD[(Int, SparseVector)]
+    ): RDD[(Int, SparseVector, Boolean)] = data.join(idsLabels).map {
+      case (id, (vector, label)) => (id, vector, label)
+    }
+
+    (joinWithLabels(trainVectors), joinWithLabels(testVectors))
   }
-
 }

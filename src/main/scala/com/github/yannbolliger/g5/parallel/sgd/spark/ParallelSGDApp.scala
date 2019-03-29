@@ -1,6 +1,7 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkConf
 
 import org.apache.log4j.Logger
 import org.apache.log4j.Level
@@ -10,20 +11,10 @@ object ParallelSGDApp extends App {
   Logger.getLogger("org").setLevel(Level.OFF)
   Logger.getLogger("akka").setLevel(Level.OFF)
 
-  var data_directory = ""
-  if (args.length > 0) {
-    data_directory = args(0)
-  }
-  else {
-    data_directory = "TODO"
-  }
+  val sparkConf = new SparkConf().setAppName("g5-parallel-sgd-spark")
+  val sc = new SparkContext(sparkConf)
 
-  val spark =
-    SparkSession.builder.appName("g5-parallel-sgd-spark").getOrCreate()
-
-  val (train, test, topics) = LoadData.load(spark, data_directory)
-
-  val trainData = train.map(SparseVector.fromString(_))
+  val (trainData, testData) = LoadData.load(sc)
 
   // TODO: split data to val and train (YANN)
 
@@ -39,7 +30,7 @@ object ParallelSGDApp extends App {
       {
         val newWeights = svm.fitEpoch(trainData, weights)
 
-        // TODO: caluclate validation loss (KYLE)
+        // TODO: caluclate validation loss (YANN)
 
         // TODO: log loss (KYLE)
 
@@ -47,6 +38,6 @@ object ParallelSGDApp extends App {
       }
   }
 
-  spark.stop()
+  sc.stop()
 
 }
