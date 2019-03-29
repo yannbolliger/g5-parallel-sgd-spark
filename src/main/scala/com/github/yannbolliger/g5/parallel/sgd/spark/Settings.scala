@@ -24,6 +24,10 @@ object Settings {
     */
   val dataPath: String = getFromEnvOrDefault("DATA_PATH", "resources/rcv1")
 
+  val trainFileName: String = dataPath + "lyrl2004_vectors_train.dat"
+  val testFileNames: String = dataPath + "lyrl2004_vectors_test_pt*.dat"
+  val topicsFileName: String = dataPath + "rcv1-v2.topics.qrels"
+
   val topicKey: String = getFromEnvOrDefault("TOPIC_KEY", "CCAT")
 
   /**

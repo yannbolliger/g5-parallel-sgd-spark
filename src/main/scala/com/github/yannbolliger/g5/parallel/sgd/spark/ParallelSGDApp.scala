@@ -11,8 +11,7 @@ object ParallelSGDApp extends App {
   Logger.getLogger("org").setLevel(Level.OFF)
   Logger.getLogger("akka").setLevel(Level.OFF)
 
-  val sparkConf =
-    new SparkConf().setAppName("g5-parallel-sgd-spark").setMaster(master)
+  val sparkConf = new SparkConf().setAppName("g5-parallel-sgd-spark")
   val sc = new SparkContext(sparkConf)
 
   val (trainData, testData) = LoadData.load(sc)

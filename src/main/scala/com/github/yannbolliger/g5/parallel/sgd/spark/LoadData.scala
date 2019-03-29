@@ -5,35 +5,22 @@ import org.apache.spark.rdd.RDD
 
 object LoadData {
 
-  private val trainDataPath =
-    Settings.dataPath + "lyrl2004_vectors_train.dat"
-
-  private val testDataPaths =
-    Settings.dataPath + "lyrl2004_vectors_test_pt*.dat"
-
-  private val topicsPath = Settings.dataPath + "rcv1-v2.topics.qrels"
-
   def load(
       sc: SparkContext
   ): (RDD[(Int, SparseVector, Boolean)], RDD[(Int, SparseVector, Boolean)]) = {
 
-    println("Read data")
-
-    val trainDataRaw = sc.textFile(trainDataPath)
-    val testDataRaw = sc.textFile(testDataRaw)
-    val topicsDataRaw = sc.textFile(topicsPath)
+    val trainDataRaw = sc.textFile(Settings.trainFileName)
+    val testDataRaw = sc.textFile(Settings.testFileNames)
+    val topicsDataRaw = sc.textFile(Settings.topicsFileName)
 
     val trainVectors = trainDataRaw.map(SparseVector.fromString(_))
     val testVectors = testDataRaw.map(SparseVector.fromString(_))
 
-    // Parse topics to labels
-    val topic = Settings.topicKey
-
     val idsLabels: RDD[(Int, Boolean)] = for (line <- topicsDataRaw)
       yield {
-        val topicKey :: id :: _ = line.split(" ").toList
+        val topic :: id :: _ = line.split(" ").toList
 
-        (id.toInt, topicKey == topic)
+        (id.toInt, topic == Settings.topicKey)
       }
 
     def joinWithLabels(
@@ -44,5 +31,4 @@ object LoadData {
 
     (joinWithLabels(trainVectors), joinWithLabels(testVectors))
   }
-
 }
