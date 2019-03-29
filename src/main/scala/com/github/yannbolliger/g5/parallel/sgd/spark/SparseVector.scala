@@ -6,7 +6,7 @@ class SparseVector(vectorMap: Map[Int, Double]) {
     vectorMap.size
   }
 
-  def getKeys: Iterable[Int] = {
+  def getNonZeroIndexes: Iterable[Int] = {
     vectorMap.keys
   }
 
@@ -16,10 +16,9 @@ class SparseVector(vectorMap: Map[Int, Double]) {
   def -(scalar: Double): SparseVector = this + (-1 * scalar)
 
   def *(scalar: Double): SparseVector =
-  SparseVector(vectorMap.mapValues(_ * scalar))
+    SparseVector(vectorMap.mapValues(_ * scalar))
 
   def /(scalar: Double): SparseVector = this * (1 / scalar)
-
 
   def +(other: SparseVector): SparseVector = {
     val newMap = (vectorMap.toSeq ++ other.vectorMap.toSeq)
@@ -31,12 +30,12 @@ class SparseVector(vectorMap: Map[Int, Double]) {
 
   def -(other: SparseVector): SparseVector = this + (other * -1)
 
-  def *(vector: Vector[Double]): SparseVector = {
+  def dot(vector: Vector[Double]): Double = {
     val newMap = vectorMap.map {
       case (key, value) => (key, vector(key) * value)
     }
 
-    SparseVector(newMap)
+    newMap.values.sum
   }
 
   def +(vector: Vector[Double]): Vector[Double] = {

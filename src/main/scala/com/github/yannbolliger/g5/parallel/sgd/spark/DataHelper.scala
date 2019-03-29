@@ -3,7 +3,7 @@ package com.github.yannbolliger.g5.parallel.sgd.spark
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
-object LoadData {
+object DataHelper {
 
   def load(
       sc: SparkContext
@@ -30,5 +30,19 @@ object LoadData {
     }
 
     (joinWithLabels(trainVectors), joinWithLabels(testVectors))
+  }
+
+  def trainValidationSplit(
+      data: RDD[(Int, SparseVector, Boolean)]
+  ): (RDD[(Int, SparseVector, Boolean)], RDD[(Int, SparseVector, Boolean)]) = {
+
+    val splitWeights = Array(
+      Settings.validationSplit,
+      1 - Settings.validationSplit
+    )
+
+    val Array(train, validation) = data.randomSplit(splitWeights)
+
+    (train, validation)
   }
 }

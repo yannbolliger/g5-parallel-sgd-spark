@@ -14,9 +14,8 @@ object ParallelSGDApp extends App {
   val sparkConf = new SparkConf().setAppName("g5-parallel-sgd-spark")
   val sc = new SparkContext(sparkConf)
 
-  val (trainData, testData) = LoadData.load(sc)
-
-  // TODO: split data to val and train (YANN)
+  val (trainData, testData) = DataHelper.load(sc)
+  val (trainSet, validationSet) = DataHelper.trainValidationSplit(trainData)
 
   val svm = new SVM(
     Settings.learningRate,
@@ -30,7 +29,7 @@ object ParallelSGDApp extends App {
       {
         val newWeights = svm.fitEpoch(trainData, weights)
 
-        // TODO: caluclate validation loss (YANN)
+        val validationLoss = svm.loss(validationSet, weights)
 
         // TODO: log loss (KYLE)
 

@@ -8,12 +8,11 @@ class SVM(
     batchFraction: Double,
     dimension: Int
 ) {
-  implicit def bool2double(b: Boolean) = if (b) 1.0 else 0.0
 
   def initialWeights: Vector[Double] = Vector.fill(dimension)(0)
 
   def regularizerGradient(x: SparseVector, weights: Vector[Double]): Double =
-    2 * lambda * x.getKeys.map(key => weights(key)).sum / x.size
+    2 * lambda * x.getNonZeroIndexes.map(key => weights(key)).sum / x.size
 
   def gradient(
       vector: SparseVector,
@@ -44,4 +43,23 @@ class SVM(
 
     newWeights
   }
+
+  def loss(
+      data: RDD[(Int, SparseVector, Boolean)],
+      weights: Vector[Double]
+  ): Double = {
+
+    val svmLoss = data
+      .map {
+        case (id, vector, label) =>
+          Math.max(0, 1 - (vector * label dot weights))
+      }
+      .sum()
+
+    val regularizerLoss = Settings.lambda * weights.map(w => w * w).sum()
+
+    1.0 / data.count * svmLoss + regularizerLoss
+  }
+
+  private implicit def bool2double(b: Boolean): Double = if (b) 1.0 else 0.0
 }
