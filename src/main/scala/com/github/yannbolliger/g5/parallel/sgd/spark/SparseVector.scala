@@ -28,7 +28,6 @@ class SparseVector(vectorMap: Map[Int, Double]) {
 
     SparseVector(newMap)
   }
-
 }
 
 object SparseVector {
