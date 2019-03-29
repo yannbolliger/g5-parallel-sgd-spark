@@ -30,6 +30,8 @@ object Settings {
 
   val topicKey: String = getFromEnvOrDefault("TOPIC_KEY", "CCAT")
 
+  val dimension: Int = 47236
+
   /**
     * SGD parameters
     */

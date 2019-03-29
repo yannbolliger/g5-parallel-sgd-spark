@@ -39,5 +39,4 @@ object ParallelSGDApp extends App {
   }
 
   sc.stop()
-
 }
