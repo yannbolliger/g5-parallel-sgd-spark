@@ -7,7 +7,7 @@ class SVM(
     lambda: Double,
     batchFraction: Double,
     dimension: Int
-) {
+) extends Serializable {
 
   def initialWeights: Vector[Double] = Vector.fill(dimension)(0)
 
@@ -32,7 +32,7 @@ class SVM(
 
     val gradients = data
       .sample(withReplacement = false, fraction = batchFraction)
-      .map(sample => gradient(sample._2, weights, sample._3))
+      .map { case (_, x, y) => gradient(x, weights, y) }
       .persist()
 
     val batchSize = gradients.count().toDouble
@@ -49,14 +49,13 @@ class SVM(
       weights: Vector[Double]
   ): Double = {
 
-    val svmLoss = data
-      .map {
-        case (id, vector, label) =>
-          Math.max(0, 1 - (vector * label dot weights))
-      }
-      .sum()
+    val svmLoss = data.map {
+      case (_, vector, label) => Math.max(0, 1 - ((vector * label) dot weights))
+    }.sum
 
-    val regularizerLoss = Settings.lambda * weights.map(w => w * w).sum()
+    val regularizerLoss: Double = Settings.lambda * weights
+      .map(w => w * w)
+      .sum
 
     1.0 / data.count * svmLoss + regularizerLoss
   }

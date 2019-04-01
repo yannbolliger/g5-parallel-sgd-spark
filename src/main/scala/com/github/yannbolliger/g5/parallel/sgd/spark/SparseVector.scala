@@ -1,6 +1,8 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
 
-class SparseVector(vectorMap: Map[Int, Double]) {
+class SparseVector(
+    private val vectorMap: Map[Int, Double]
+) extends Serializable {
 
   def size: Int = {
     vectorMap.size
@@ -40,8 +42,9 @@ class SparseVector(vectorMap: Map[Int, Double]) {
 
   def +(vector: Vector[Double]): Vector[Double] = {
     val newVector = vector.zipWithIndex.map {
-      case (value, idx) => value + vectorMap.getOrElse(idx, 0)
+      case (value, idx) => value + vectorMap.getOrElse(idx, 0.0)
     }
+
     newVector
   }
 
@@ -53,13 +56,14 @@ object SparseVector {
     new SparseVector(vectorMap)
 
   def fromString(line: String): (Int, SparseVector) = {
-    val idString :: data: List[String] = line.trim.split(raw"\s+")
+    val idString :: data = line.trim.split(raw"\s+").toList
 
     val id: Int = idString.toInt
 
     val vectorMap: Map[Int, Double] = data
       .map(keyValuePair => {
-        val (key: String) :: (value: String) :: _ = keyValuePair.split(":", 1)
+        val key :: value :: _ = keyValuePair.split(":").toList
+
         key.toInt -> value.toDouble
       })
       .toMap

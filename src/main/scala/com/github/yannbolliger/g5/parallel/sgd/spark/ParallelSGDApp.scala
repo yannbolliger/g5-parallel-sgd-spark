@@ -3,13 +3,7 @@ package com.github.yannbolliger.g5.parallel.sgd.spark
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 
-import org.apache.log4j.Logger
-import org.apache.log4j.Level
-
 object ParallelSGDApp extends App {
-
-  Logger.getLogger("org").setLevel(Level.OFF)
-  Logger.getLogger("akka").setLevel(Level.OFF)
 
   val sparkConf = new SparkConf().setAppName("g5-parallel-sgd-spark")
   val sc = new SparkContext(sparkConf)

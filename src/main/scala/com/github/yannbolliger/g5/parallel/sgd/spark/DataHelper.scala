@@ -13,8 +13,8 @@ object DataHelper {
     val testDataRaw = sc.textFile(Settings.testFileNames)
     val topicsDataRaw = sc.textFile(Settings.topicsFileName)
 
-    val trainVectors = trainDataRaw.map(SparseVector.fromString(_))
-    val testVectors = testDataRaw.map(SparseVector.fromString(_))
+    val trainVectors = trainDataRaw.map(SparseVector.fromString)
+    val testVectors = testDataRaw.map(SparseVector.fromString)
 
     val idsLabels: RDD[(Int, Boolean)] = for (line <- topicsDataRaw)
       yield {

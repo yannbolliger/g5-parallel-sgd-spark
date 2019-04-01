@@ -6,8 +6,7 @@ sbt package
 
 # submit to spark
 spark-submit \
-    --class "ParallelSGDApp" \
+    --class "com.github.yannbolliger.g5.parallel.sgd.spark.ParallelSGDApp" \
     --master local[4] \
-    target/scala-2.11/g5-parallel-sgd-spark*.jar \
-    "/Users/jonathanbesomi/data-systems/"
+    target/scala-2.11/g5-parallel-sgd-spark*.jar
 
