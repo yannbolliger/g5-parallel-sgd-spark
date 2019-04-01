@@ -11,6 +11,8 @@ object ParallelSGDApp extends App {
   val (trainData, testData) = DataHelper.load(sc)
   val (trainSet, validationSet) = DataHelper.trainValidationSplit(trainData)
 
+  print(trainSet.toDebugString)
+
   val svm = new SVM(
     Settings.learningRate,
     Settings.lambda,

@@ -33,12 +33,14 @@ class SVM(
 
     val gradients = data
       .sample(withReplacement = false, fraction = batchFraction)
-      .map { case (_, (x, y)) => gradient(x, weights, y) }
-      .persist()
+      .mapValues { case (x, y) => gradient(x, weights, y) }
+      .persist
 
-    val batchSize = gradients.count().toDouble
+    val batchSize = gradients.count.toDouble
 
-    val averageGradient = gradients.reduce(_ + _) / batchSize
+    // first average on partitions, then on master
+    val averageGradient =
+      gradients.aggregate(SparseVector(Map.empty))(_ + _._2, _ + _) / batchSize
 
     val newWeights = (averageGradient * -learningRate) + weights
 
@@ -47,9 +49,11 @@ class SVM(
 
   def loss(data: RDD[LabelledData], weights: Vector[Double]): Double = {
 
-    val svmLoss = data.map {
-      case (_, (x, label)) => Math.max(0, 1 - ((x * label) dot weights))
-    }.sum
+    val svmLoss = data
+      .mapValues {
+        case (vector, label) => Math.max(0, 1 - ((vector * label) dot weights))
+      }
+      .aggregate(0.0)(_ + _._2, _ + _)
 
     val regularizerLoss: Double = Settings.lambda * weights
       .map(w => w * w)
