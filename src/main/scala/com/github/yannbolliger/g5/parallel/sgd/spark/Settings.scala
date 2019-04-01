@@ -1,4 +1,5 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
+import org.apache.spark.{HashPartitioner, Partitioner}
 
 object Settings {
 
@@ -17,6 +18,8 @@ object Settings {
     */
   val numberWorkers: Int = getFromEnvOrDefault[Int]("N_WORKERS", 4)
 
+  val partitioner: Partitioner = new HashPartitioner(2 * numberWorkers)
+
   val envLocal: Boolean = getFromEnvOrDefault("RUN_LOCAL", true)
 
   /**
@@ -30,7 +33,7 @@ object Settings {
 
   val topicKey: String = getFromEnvOrDefault("TOPIC_KEY", "CCAT")
 
-  val dimension: Int = 47236
+  val dimension: Int = 47237
 
   /**
     * SGD parameters

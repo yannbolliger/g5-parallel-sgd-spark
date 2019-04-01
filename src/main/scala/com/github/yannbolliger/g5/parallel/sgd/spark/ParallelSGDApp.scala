@@ -21,7 +21,7 @@ object ParallelSGDApp extends App {
   val finalWeight = (1 to Settings.epochs).foldLeft(svm.initialWeights) {
     (weights, epoch) =>
       {
-        val newWeights = svm.fitEpoch(trainData, weights)
+        val newWeights = svm.fitEpoch(trainSet, weights)
 
         val validationLoss = svm.loss(validationSet, weights)
 

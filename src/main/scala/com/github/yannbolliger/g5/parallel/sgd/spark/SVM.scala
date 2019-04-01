@@ -1,5 +1,6 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
 
+import com.github.yannbolliger.g5.parallel.sgd.spark.DataHelper.LabelledData
 import org.apache.spark.rdd.RDD
 
 class SVM(
@@ -26,13 +27,13 @@ class SVM(
   }
 
   def fitEpoch(
-      data: RDD[(Int, SparseVector, Boolean)],
+      data: RDD[LabelledData],
       weights: Vector[Double]
   ): Vector[Double] = {
 
     val gradients = data
       .sample(withReplacement = false, fraction = batchFraction)
-      .map { case (_, x, y) => gradient(x, weights, y) }
+      .map { case (_, (x, y)) => gradient(x, weights, y) }
       .persist()
 
     val batchSize = gradients.count().toDouble
@@ -44,13 +45,10 @@ class SVM(
     newWeights
   }
 
-  def loss(
-      data: RDD[(Int, SparseVector, Boolean)],
-      weights: Vector[Double]
-  ): Double = {
+  def loss(data: RDD[LabelledData], weights: Vector[Double]): Double = {
 
     val svmLoss = data.map {
-      case (_, vector, label) => Math.max(0, 1 - ((vector * label) dot weights))
+      case (_, (x, label)) => Math.max(0, 1 - ((x * label) dot weights))
     }.sum
 
     val regularizerLoss: Double = Settings.lambda * weights

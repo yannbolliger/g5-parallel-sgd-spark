@@ -5,16 +5,12 @@ import org.apache.spark.rdd.RDD
 
 object DataHelper {
 
-  def load(
-      sc: SparkContext
-  ): (RDD[(Int, SparseVector, Boolean)], RDD[(Int, SparseVector, Boolean)]) = {
+  type LabelledData = (Int, (SparseVector, Boolean))
 
-    val trainDataRaw = sc.textFile(Settings.trainFileName)
-    val testDataRaw = sc.textFile(Settings.testFileNames)
+  def load(sc: SparkContext): (RDD[LabelledData], RDD[LabelledData]) = {
+
+    val fileNames = List(Settings.trainFileName, Settings.testFileNames)
     val topicsDataRaw = sc.textFile(Settings.topicsFileName)
-
-    val trainVectors = trainDataRaw.map(SparseVector.fromString)
-    val testVectors = testDataRaw.map(SparseVector.fromString)
 
     val idsLabels: RDD[(Int, Boolean)] = for (line <- topicsDataRaw)
       yield {
@@ -23,18 +19,23 @@ object DataHelper {
         (id.toInt, topic == Settings.topicKey)
       }
 
-    def joinWithLabels(
-        data: RDD[(Int, SparseVector)]
-    ): RDD[(Int, SparseVector, Boolean)] = data.join(idsLabels).map {
-      case (id, (vector, label)) => (id, vector, label)
-    }
+    def joinWithLabels(data: RDD[(Int, SparseVector)]): RDD[LabelledData] =
+      data.join(idsLabels)
 
-    (joinWithLabels(trainVectors), joinWithLabels(testVectors))
+    val trainData :: testData :: _ = fileNames.map(
+      fileName =>
+        sc.textFile(fileName)
+          .map(SparseVector.fromString)
+          .partitionBy(Settings.partitioner)
+          .join(idsLabels)
+    )
+
+    (trainData, testData.persist)
   }
 
   def trainValidationSplit(
-      data: RDD[(Int, SparseVector, Boolean)]
-  ): (RDD[(Int, SparseVector, Boolean)], RDD[(Int, SparseVector, Boolean)]) = {
+      data: RDD[LabelledData]
+  ): (RDD[LabelledData], RDD[LabelledData]) = {
 
     val splitWeights = Array(
       Settings.validationSplit,
@@ -43,6 +44,6 @@ object DataHelper {
 
     val Array(train, validation) = data.randomSplit(splitWeights)
 
-    (train, validation)
+    (train.persist, validation.persist)
   }
 }
