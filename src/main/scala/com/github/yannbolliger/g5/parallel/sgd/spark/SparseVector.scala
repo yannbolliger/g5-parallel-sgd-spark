@@ -13,12 +13,16 @@ class SparseVector(
   }
 
   def +(scalar: Double): SparseVector =
-    SparseVector(vectorMap.mapValues(_ + scalar))
+    // mapValues has a bug and cannot be serialized in Scala 2.11
+    // see https://github.com/scala/bug/issues/7005
+    // therefore we need to add something at the end
+    SparseVector(vectorMap.mapValues(_ + scalar).map(identity))
 
   def -(scalar: Double): SparseVector = this + (-1 * scalar)
 
   def *(scalar: Double): SparseVector =
-    SparseVector(vectorMap.mapValues(_ * scalar))
+    // see above for map(identity)
+    SparseVector(vectorMap.mapValues(_ * scalar).map(identity))
 
   def /(scalar: Double): SparseVector = this * (1 / scalar)
 
@@ -26,6 +30,8 @@ class SparseVector(
     val newMap = (vectorMap.toSeq ++ other.vectorMap.toSeq)
       .groupBy(_._1)
       .mapValues(_.map(_._2).sum)
+      // see above for map(identity)
+      .map(identity)
 
     SparseVector(newMap)
   }

@@ -38,7 +38,6 @@ class SVM(
 
     val batchSize = gradients.count.toDouble
 
-    // first average on partitions, then on master
     val averageGradient =
       gradients.aggregate(SparseVector(Map.empty))(_ + _._2, _ + _) / batchSize
 
