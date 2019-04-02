@@ -10,6 +10,12 @@ class SVM(
     dimension: Int
 ) extends Serializable {
 
+  def isMissclassified(
+      vector: SparseVector,
+      weights: Vector[Double],
+      label: Boolean
+  ): Boolean = (vector dot weights) * label < 1
+
   def initialWeights: Vector[Double] = Vector.fill(dimension)(0)
 
   def regularizerGradient(x: SparseVector, weights: Vector[Double]): Double =
@@ -23,7 +29,11 @@ class SVM(
 
     val regularizer: Double = regularizerGradient(vector, weights)
 
-    vector * label - regularizer
+    if (isMissclassified(vector, weights, label))
+      vector * label - regularizer
+    else
+      // replace vector's components with -regularizer
+      vector - (vector + regularizer)
   }
 
   def fitEpoch(
@@ -41,7 +51,7 @@ class SVM(
     val averageGradient =
       gradients.aggregate(SparseVector(Map.empty))(_ + _._2, _ + _) / batchSize
 
-    val newWeights = (averageGradient * -learningRate) + weights
+    val newWeights = (averageGradient * learningRate) + weights
 
     newWeights
   }
