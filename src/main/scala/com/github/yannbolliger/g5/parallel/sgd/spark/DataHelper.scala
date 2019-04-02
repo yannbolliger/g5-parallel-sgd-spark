@@ -12,14 +12,14 @@ object DataHelper {
     val fileNames = List(Settings.trainFileName, Settings.testFileNames)
     val topicsDataRaw = sc.textFile(Settings.topicsFileName)
 
-    val idsLabels: RDD[(Int, Boolean)] = (for {
-      line <- topicsDataRaw
-    } yield {
-      val topic :: id :: _ = line.split(" ").toList
-
-      (id.toInt, topic == Settings.topicKey)
-    }).groupByKey()
-      .mapValues(_.exists(t => t))
+    val idsLabels: RDD[(Int, Boolean)] = topicsDataRaw
+      .map(line => {
+        val topic :: id :: _ = line.split(" ").toList
+        (id.toInt, topic)
+      })
+      .groupByKey()
+      .mapValues(_.exists(_ == Settings.topicKey))
+      .persist
 
     val trainData :: testData :: _ = fileNames.map(
       fileName =>
@@ -29,7 +29,7 @@ object DataHelper {
           .join(idsLabels)
     )
 
-    (trainData, testData.persist)
+    (trainData, testData)
   }
 
   def trainValidationSplit(
@@ -42,7 +42,6 @@ object DataHelper {
     )
 
     val Array(train, validation) = data.randomSplit(splitWeights)
-
-    (train.persist, validation.persist)
+    (train, validation)
   }
 }
