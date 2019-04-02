@@ -20,6 +20,8 @@ object ParallelSGDApp extends App {
     Settings.dimension
   )
 
+  val Logger = new Logger(Settings.numberWorkers, Settings.epochs)
+
   val finalWeight = (1 to Settings.epochs).foldLeft(svm.initialWeights) {
     (weights, epoch) =>
       {
@@ -27,11 +29,15 @@ object ParallelSGDApp extends App {
 
         val validationLoss = svm.loss(validationSet, weights)
 
-        // TODO: log loss (KYLE)
+        Logger.appendLoss(validationLoss)
 
         newWeights
       }
   }
+
+
+  Logger.finish()
+
 
   sc.stop()
 }
