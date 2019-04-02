@@ -1,4 +1,5 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
+import org.apache.spark.{HashPartitioner, Partitioner}
 
 object Settings {
 
@@ -17,6 +18,8 @@ object Settings {
     */
   val numberWorkers: Int = getFromEnvOrDefault[Int]("N_WORKERS", 4)
 
+  val partitioner: Partitioner = new HashPartitioner(2 * numberWorkers)
+
   val envLocal: Boolean = getFromEnvOrDefault("RUN_LOCAL", true)
 
   /**
@@ -24,11 +27,13 @@ object Settings {
     */
   val dataPath: String = getFromEnvOrDefault("DATA_PATH", "resources/rcv1")
 
-  val trainFileName: String = dataPath + "lyrl2004_vectors_train.dat"
-  val testFileNames: String = dataPath + "lyrl2004_vectors_test_pt*.dat"
-  val topicsFileName: String = dataPath + "rcv1-v2.topics.qrels"
+  val trainFileName: String = dataPath + "/lyrl2004_vectors_train.dat"
+  val testFileNames: String = dataPath + "/lyrl2004_vectors_test_pt*.dat"
+  val topicsFileName: String = dataPath + "/rcv1-v2.topics.qrels"
 
   val topicKey: String = getFromEnvOrDefault("TOPIC_KEY", "CCAT")
+
+  val dimension: Int = 47237
 
   /**
     * SGD parameters
