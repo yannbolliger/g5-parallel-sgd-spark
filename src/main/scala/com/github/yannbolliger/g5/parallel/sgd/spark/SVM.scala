@@ -71,5 +71,8 @@ class SVM(
     1.0 / data.count * svmLoss + regularizerLoss
   }
 
-  private implicit def bool2double(b: Boolean): Double = if (b) 1.0 else 0.0
+  def predict(x: SparseVector, weights: Vector[Double]): Boolean =
+    (x dot weights) > 0
+
+  private implicit def bool2double(b: Boolean): Double = if (b) 1.0 else -1.0
 }

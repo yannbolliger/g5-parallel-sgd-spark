@@ -11,7 +11,7 @@ object ParallelSGDApp extends App {
   val (trainData, testData) = DataHelper.load(sc)
   val (trainSet, validationSet) = DataHelper.trainValidationSplit(trainData)
 
-  print(trainSet.toDebugString)
+  val Logger = new Logger(Settings.numberWorkers, Settings.epochs)
 
   val svm = new SVM(
     Settings.learningRate,
@@ -20,24 +20,24 @@ object ParallelSGDApp extends App {
     Settings.dimension
   )
 
-  val Logger = new Logger(Settings.numberWorkers, Settings.epochs)
-
   val finalWeight = (1 to Settings.epochs).foldLeft(svm.initialWeights) {
     (weights, epoch) =>
       {
         val newWeights = svm.fitEpoch(trainSet, weights)
 
-        val validationLoss = svm.loss(validationSet, weights)
+        val validationLoss = svm.loss(validationSet, newWeights)
 
         Logger.appendLoss(validationLoss)
+        println(s"======================\n\n$validationLoss\n\n===============")
 
         newWeights
       }
   }
 
+  // TODO: calculate all the test statistics
+  // with testData
 
   Logger.finish()
-
 
   sc.stop()
 }
