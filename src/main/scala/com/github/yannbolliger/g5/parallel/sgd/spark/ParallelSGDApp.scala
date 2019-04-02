@@ -36,7 +36,7 @@ object ParallelSGDApp extends App {
   }
 
 
-  Logger
+  Logger.finish()
 
 
   sc.stop()
