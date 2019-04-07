@@ -16,7 +16,7 @@ object Settings {
   /**
     * Spark, system parameters
     */
-  val numberWorkers: Int = getFromEnvOrDefault[Int]("N_WORKERS", 4)
+  val numberWorkers: Int = getFromEnvOrDefault("N_WORKERS", 4)
 
   val partitioner: Partitioner = new HashPartitioner(2 * numberWorkers)
 
