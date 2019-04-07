@@ -1,5 +1,6 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
 
+import scala.language.implicitConversions
 import com.github.yannbolliger.g5.parallel.sgd.spark.DataHelper.LabelledData
 import org.apache.spark.rdd.RDD
 
@@ -10,7 +11,7 @@ class SVM(
     dimension: Int
 ) extends Serializable {
 
-  def isMissclassified(
+  def isMisclassified(
       vector: SparseVector,
       weights: Vector[Double],
       label: Boolean
@@ -29,7 +30,7 @@ class SVM(
 
     val regularizer: Double = regularizerGradient(vector, weights)
 
-    if (isMissclassified(vector, weights, label))
+    if (isMisclassified(vector, weights, label))
       vector * label - regularizer
     else
       // replace vector's components with -regularizer
