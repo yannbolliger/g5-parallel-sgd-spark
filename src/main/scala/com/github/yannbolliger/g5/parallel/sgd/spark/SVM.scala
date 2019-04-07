@@ -11,6 +11,8 @@ class SVM(
     dimension: Int
 ) extends Serializable {
 
+  private implicit def bool2double(b: Boolean): Double = if (b) 1.0 else -1.0
+
   def isMisclassified(
       vector: SparseVector,
       weights: Vector[Double],
@@ -50,7 +52,7 @@ class SVM(
     val batchSize = gradients.count.toDouble
 
     val averageGradient =
-      gradients.aggregate(SparseVector(Map.empty))(_ + _._2, _ + _) / batchSize
+      gradients.aggregate(SparseVector.empty)(_ + _._2, _ + _) / batchSize
 
     val newWeights = (averageGradient * learningRate) + weights
 
@@ -74,6 +76,4 @@ class SVM(
 
   def predict(x: SparseVector, weights: Vector[Double]): Boolean =
     (x dot weights) > 0
-
-  private implicit def bool2double(b: Boolean): Double = if (b) 1.0 else -1.0
 }

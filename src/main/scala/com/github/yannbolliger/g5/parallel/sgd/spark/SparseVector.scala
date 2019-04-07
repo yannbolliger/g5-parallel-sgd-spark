@@ -52,6 +52,8 @@ case class SparseVector(private val vectorMap: Map[Int, Double]) {
 
 object SparseVector {
 
+  def empty: SparseVector = SparseVector(Map.empty)
+
   def fromString(line: String): (Int, SparseVector) = {
     val idString :: data = line.trim.split(raw"\s+").toList
 

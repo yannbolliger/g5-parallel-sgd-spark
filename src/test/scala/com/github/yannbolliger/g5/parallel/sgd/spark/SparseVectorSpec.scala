@@ -7,7 +7,7 @@ class SparseVectorSpec extends FunSpec {
   describe("A SparseVector") {
 
     describe("when empty") {
-      val emptySparseVector = SparseVector(Map.empty)
+      val emptySparseVector = SparseVector.empty
       val doubleVector = Vector(1.0, 2, 3)
 
       it("has size 0") {
@@ -85,12 +85,26 @@ class SparseVectorSpec extends FunSpec {
     describe("dot product") {
       val sparseVector = SparseVector(Map(0 -> 0.1, 2 -> 1.2, 4 -> 0.5))
 
-      // it("")
+      it("throws if dense vector is not long enough") {
+        assertThrows[IndexOutOfBoundsException](sparseVector dot Vector(1, 2))
+      }
+
+      it("calculates dot product for equal size dense vector") {
+        assert((sparseVector dot Vector(1, 1, 1, 1, 1)) === 1.8)
+      }
+
+      it("correctly calculates dot product") {
+        assert((sparseVector dot Vector(2, 0, 0, -3, -1000)) === -499.8)
+      }
+
+      it("calculates dot product for longer dense vector") {
+        assert((sparseVector dot Vector(1, 1, 1, 1, 1, 1)) === 1.8)
+      }
     }
 
     describe("parse from String") {
       it("decrements ids of components by 1") {
-        val line = "1111 1:0.001 2:0.01 200:20.3"
+        val line = " 1111 1:0.001 2:0.01  200:20.3 "
 
         assert(
           SparseVector.fromString(line) ===
