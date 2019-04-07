@@ -51,31 +51,30 @@ class SVM(
       .mapValues { case (x, y) => gradient(x, weights, y) }
       .persist
 
-    val batchSize = gradients.count.toDouble
+    //val batchSize = gradients.count.toDouble
 
     val averageGradient =
-      gradients.aggregate(SparseVector.empty)(_ + _._2, _ + _) / batchSize
+      gradients.aggregate(SparseVector.empty)(_ + _._2, _ + _)
 
     val newWeights = (averageGradient * learningRate) + weights
 
     newWeights
   }
 
-  def loss(data: RDD[LabelledData], weights: Vector[Double]): Double = {
+  def predict(x: SparseVector, weights: Vector[Double]): Boolean =
+    (x dot weights) > 0
 
-    val svmLoss = data
+  def svmLoss(data: RDD[LabelledData], weights: Vector[Double]): Double =
+    (1.0 / data.count) * data
       .mapValues {
-        case (vector, label) => Math.max(0, 1 - ((vector * label) dot weights))
+        case (vector, label) => Math.max(0, 1 - ((vector dot weights) * label))
       }
       .aggregate(0.0)(_ + _._2, _ + _)
 
-    val regularizerLoss: Double = Settings.lambda * weights
-      .map(w => w * w)
-      .sum
+  def regularizerLoss(weights: Vector[Double]): Double =
+    Settings.lambda * weights.map(w => w * w).sum
 
-    1.0 / data.count * svmLoss + regularizerLoss
-  }
+  def loss(data: RDD[LabelledData], weights: Vector[Double]): Double =
+    svmLoss(data, weights) + regularizerLoss(weights)
 
-  def predict(x: SparseVector, weights: Vector[Double]): Boolean =
-    (x dot weights) > 0
 }
