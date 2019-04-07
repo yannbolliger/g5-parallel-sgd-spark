@@ -14,7 +14,7 @@ object ParallelSGDApp extends App {
   testData.persist
   trainSet.persist
   validationSet.persist
-
+  
   val Logger = new Logger(Settings.numberWorkers, Settings.epochs)
 
   val svm = new SVM(

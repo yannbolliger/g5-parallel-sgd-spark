@@ -29,15 +29,3 @@ COPY ${img_path}/spark/entrypoint.sh /opt/
 COPY examples /opt/spark/examples
 COPY ${k8s_tests} /opt/spark/tests
 COPY data /opt/spark/data
-
-# Copy JAR files
-COPY target/scala-2.11/g5-parallel-sgd-spark_2.11-0.1.jar /opt/spark/g5-parallel-sgd-spark_2.11-0.1.jar
-
-ENV DATA_PATH='/data/'
-
-# Copy data files
-ENV SPARK_HOME /opt/spark
-
-WORKDIR /opt/spark/work-dir
-
-ENTRYPOINT [ "/opt/entrypoint.sh" ]
