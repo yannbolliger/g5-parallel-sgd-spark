@@ -46,7 +46,7 @@ object Settings {
 
   val learningRate: Double = getFromEnvOrDefault(
     "LEARNING_RATE",
-    0.03 * batchFraction / numberWorkers
+    3 * batchFraction / numberWorkers
   )
 
   val lambda: Double = getFromEnvOrDefault("LAMBDA", 1E-5)

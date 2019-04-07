@@ -1,8 +1,17 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
 
 class SparseVector(
-    private val vectorMap: Map[Int, Double]
+    private val vectorMap: Map[Int, Double],
+    private val aggregate: Map[Int, Int] = Map()
 ) extends Serializable {
+
+  def counts: Map[Int, Int] =
+    if (aggregate.size != vectorMap.size) {
+      vectorMap.mapValues(_ => 1)
+    }
+    else {
+      aggregate
+    }
 
   def size: Int = {
     vectorMap.size
@@ -10,6 +19,28 @@ class SparseVector(
 
   def getNonZeroIndexes: Iterable[Int] = {
     vectorMap.keys
+  }
+
+  def aggregate(other: SparseVector): SparseVector = {
+    val newMap = (vectorMap.toSeq ++ other.vectorMap.toSeq)
+      .groupBy(_._1)
+      .mapValues(_.map(_._2).sum)
+      // see above for map(identity)
+      .map(identity)
+
+    val aggregated_counts = (counts.toSeq ++ other.counts.toSeq)
+      .groupBy(_._1)
+      .mapValues(_.map(_._2).sum)
+      // see above for map(identity)
+      .map(identity)
+
+    SparseVector(newMap, aggregated_counts)
+  }
+
+  def getAverageGradient(): SparseVector = {
+    SparseVector(vectorMap.map {
+      case (k, weight) => (k, weight / counts.getOrElse(k, 1))
+    })
   }
 
   def +(scalar: Double): SparseVector =
@@ -58,8 +89,10 @@ class SparseVector(
 
 object SparseVector {
 
-  def apply(vectorMap: Map[Int, Double]): SparseVector =
-    new SparseVector(vectorMap)
+  def apply(
+      vectorMap: Map[Int, Double],
+      aggregate: Map[Int, Int] = Map()): SparseVector =
+    new SparseVector(vectorMap, aggregate: Map[Int, Int])
 
   def fromString(line: String): (Int, SparseVector) = {
     val idString :: data = line.trim.split(raw"\s+").toList

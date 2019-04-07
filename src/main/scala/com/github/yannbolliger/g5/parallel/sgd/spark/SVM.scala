@@ -46,10 +46,8 @@ class SVM(
       .mapValues { case (x, y) => gradient(x, weights, y) }
       .persist
 
-    val batchSize = gradients.count.toDouble
-
     val averageGradient =
-      gradients.aggregate(SparseVector(Map.empty))(_ + _._2, _ + _) / batchSize
+      gradients.aggregate(SparseVector(Map.empty))(_ aggregate _._2, _ aggregate _).getAverageGradient()
 
     val newWeights = (averageGradient * learningRate) + weights
 
@@ -60,7 +58,7 @@ class SVM(
 
     val svmLoss = data
       .mapValues {
-        case (vector, label) => Math.max(0, 1 - ((vector * label) dot weights))
+        case (vector, label) => Math.max(0, 1 - label * (vector dot weights))
       }
       .aggregate(0.0)(_ + _._2, _ + _)
 
