@@ -19,7 +19,9 @@ class SVM(
       label: Boolean
   ): Boolean = (vector dot weights) * label < 1
 
-  def initialWeights: Vector[Double] = Vector.fill(dimension)(0)
+  def initialWeights: Vector[Double] =
+    // also have a bias term: + 1
+    Vector.fill(dimension + 1)(0)
 
   def regularizerGradient(x: SparseVector, weights: Vector[Double]): Double =
     2 * lambda * x.getNonZeroIndexes.map(key => weights(key)).sum / x.size

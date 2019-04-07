@@ -54,7 +54,7 @@ object SparseVector {
 
   def empty: SparseVector = SparseVector(Map.empty)
 
-  def fromString(line: String): (Int, SparseVector) = {
+  def fromStringWithBias(line: String): (Int, SparseVector) = {
     val idString :: data = line.trim.split(raw"\s+").toList
 
     val id: Int = idString.toInt
@@ -63,10 +63,10 @@ object SparseVector {
       .map(keyValuePair => {
         val key :: value :: _ = keyValuePair.split(":").toList
 
-        (key.toInt - 1) -> value.toDouble
+        (key.toInt) -> value.toDouble
       })
       .toMap
 
-    (id, SparseVector(vectorMap))
+    (id, SparseVector(vectorMap + (0 -> 1.0)))
   }
 }

@@ -24,7 +24,7 @@ object DataHelper {
     val trainData :: testData :: _ = fileNames.map(
       fileName =>
         sc.textFile(fileName)
-          .map(SparseVector.fromString)
+          .map(SparseVector.fromStringWithBias)
           .partitionBy(Settings.partitioner)
           .join(idsLabels)
     )

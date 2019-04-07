@@ -103,12 +103,12 @@ class SparseVectorSpec extends FunSpec {
     }
 
     describe("parse from String") {
-      it("decrements ids of components by 1") {
+      it("adds bias term in front of vector") {
         val line = " 1111 1:0.001 2:0.01  200:20.3 "
 
         assert(
-          SparseVector.fromString(line) ===
-            (1111, SparseVector(Map(0 -> 0.001, 1 -> 0.01, 199 -> 20.3)))
+          SparseVector.fromStringWithBias(line) ===
+            (1111, SparseVector(Map(0 -> 1, 1 -> 0.001, 2 -> 0.01, 200 -> 20.3)))
         )
       }
     }
