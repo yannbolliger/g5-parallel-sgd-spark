@@ -15,21 +15,21 @@ object DataHelper {
     val idsLabels: RDD[(Int, Boolean)] = topicsDataRaw
       .map(line => {
         val topic :: id :: _ = line.split(" ").toList
-        (id.toInt, topic)
+
+        (id.toInt, topic == Settings.topicKey)
       })
-      .groupByKey()
-      .mapValues(_.exists(_ == Settings.topicKey))
+      .reduceByKey(_ || _)
       .persist
 
     val trainData :: testData :: _ = fileNames.map(
       fileName =>
         sc.textFile(fileName)
-          .map(SparseVector.fromString)
+          .map(SparseVector.fromStringWithBias)
           .partitionBy(Settings.partitioner)
           .join(idsLabels)
     )
 
-    (trainData, testData)
+    (trainData.persist, testData.persist)
   }
 
   def trainValidationSplit(
@@ -42,6 +42,6 @@ object DataHelper {
     )
 
     val Array(train, validation) = data.randomSplit(splitWeights)
-    (train, validation)
+    (train.persist, validation.persist)
   }
 }

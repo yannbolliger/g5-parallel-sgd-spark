@@ -11,10 +11,12 @@ object ParallelSGDApp extends App {
   val (trainData, testData) = DataHelper.load(sc)
   val (trainSet, validationSet) = DataHelper.trainValidationSplit(trainData)
 
+
   testData.persist
   trainSet.persist
   validationSet.persist
   
+
   val Logger = new Logger(Settings.numberWorkers, Settings.epochs)
 
   val svm = new SVM(

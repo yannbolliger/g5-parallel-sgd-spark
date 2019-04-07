@@ -1,16 +1,10 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
 
-class SparseVector(
-    private val vectorMap: Map[Int, Double]
-) extends Serializable {
+case class SparseVector(private val vectorMap: Map[Int, Double]) {
 
-  def size: Int = {
-    vectorMap.size
-  }
+  def size: Int = vectorMap.size
 
-  def getNonZeroIndexes: Iterable[Int] = {
-    vectorMap.keys
-  }
+  def getNonZeroIndexes: Iterable[Int] = vectorMap.keys
 
   def +(scalar: Double): SparseVector =
     // mapValues has a bug and cannot be serialized in Scala 2.11
@@ -58,10 +52,9 @@ class SparseVector(
 
 object SparseVector {
 
-  def apply(vectorMap: Map[Int, Double]): SparseVector =
-    new SparseVector(vectorMap)
+  def empty: SparseVector = SparseVector(Map.empty)
 
-  def fromString(line: String): (Int, SparseVector) = {
+  def fromStringWithBias(line: String): (Int, SparseVector) = {
     val idString :: data = line.trim.split(raw"\s+").toList
 
     val id: Int = idString.toInt
@@ -70,10 +63,10 @@ object SparseVector {
       .map(keyValuePair => {
         val key :: value :: _ = keyValuePair.split(":").toList
 
-        key.toInt -> value.toDouble
+        (key.toInt) -> value.toDouble
       })
       .toMap
 
-    (id, SparseVector(vectorMap))
+    (id, SparseVector(vectorMap + (0 -> 1.0)))
   }
 }
