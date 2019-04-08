@@ -29,33 +29,35 @@ object ParallelSGDApp extends App {
     settings.dimension
   )
 
-  // TODO: early stopping
+  val (finalWeight, validationLosses) =
+    (1 to settings.epochs)
+      .foldLeft((svm.initialWeights, List.empty[Double])) {
 
-  val finalWeight = (1 to settings.epochs).foldLeft(svm.initialWeights) {
-    (weights, epoch) =>
-      {
-        val newWeights = svm.fitEpoch(trainSet, weights)
+        case ((weights, losses), epoch) =>
+          val lastLosses = losses.take(settings.earlyStoppingWindow)
 
-        val validationLoss = svm.loss(validationSet, newWeights)
+          // if last losses are all equal we skip the iteration
+          if (lastLosses.size > settings.earlyStoppingWindow &&
+              lastLosses.forall(_ == lastLosses.head))
+            (weights, losses)
 
-        Logger.appendLoss(validationLoss)
+          // otherwise calculate next epoch
+          else {
+            val newWeights = svm.fitEpoch(trainSet, weights)
+            val validationLoss = svm.loss(validationSet, newWeights)
 
-        println(s"======================\n\n$validationLoss\n\n===============")
-        newWeights
+            Logger.appendLoss(validationLoss)
+            println(s"Validation loss at epoch $epoch: $validationLoss")
+
+            (newWeights, validationLoss :: losses)
+          }
       }
-  }
-
-  // Statistics
-  val accuracy_test = svm.acc(testData, finalWeight)
-  val accuracy_train = svm.acc(trainSet, finalWeight)
-  val accuracy_val = svm.acc(validationSet, finalWeight)
-  val losses_val = svm.loss(validationSet, finalWeight)
 
   Logger.finish(
-    accuracy_test=accuracy_test,
-    accuracy_train=accuracy_train,
-    accuracy_val=accuracy_val,
-    losses_val=losses_val
+    accuracy_test = svm.accuracy(testData, finalWeight),
+    accuracy_train = svm.accuracy(trainSet, finalWeight),
+    accuracy_val = svm.accuracy(validationSet, finalWeight),
+    losses_val = svm.loss(validationSet, finalWeight)
   )
 
   sc.stop()

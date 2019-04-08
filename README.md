@@ -28,13 +28,6 @@ The `./run.sh` exposes three different parameters:
 
 ### TODOs
 
-- Explain Docker/Kubernetes: Jonny
-- Params for Docker
-
-- Implement early stopping: Yann
-
-- Implement final statistics for log: Jonny
-
 - Tune learning rate for different batch fractions: Kyle
 
 - Clone the hogwild-python: Kyle

@@ -39,7 +39,7 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
   /**
     * SGD parameters
     */
-  val subsetSize: Int = if (args.size > 0) args(0) else 1000
+  val subsetSize: Int = if (args.length > 0) args(0) else 1000
 
   val batchFraction: Double = subsetSize / 20000.0
 
@@ -53,4 +53,6 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
   )
 
   val lambda: Double = getFromEnvOrDefault("LAMBDA", 1E-5)
+
+  val earlyStoppingWindow: Int = 10
 }
