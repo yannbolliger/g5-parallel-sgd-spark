@@ -46,7 +46,7 @@ object Settings {
 
   val learningRate: Double = getFromEnvOrDefault(
     "LEARNING_RATE",
-    10 / numberWorkers
+    0.3 / numberWorkers.toDouble
   )
 
   val lambda: Double = getFromEnvOrDefault("LAMBDA", 1E-5)

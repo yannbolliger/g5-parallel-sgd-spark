@@ -2,6 +2,7 @@
 set -eo pipefail
 
 # build app
+sbt clean
 sbt package
 
 # submit to spark
