@@ -25,6 +25,8 @@ object ParallelSGDApp extends App {
     Settings.dimension
   )
 
+  // TODO: early stopping
+
   val finalWeight = (1 to Settings.epochs).foldLeft(svm.initialWeights) {
     (weights, epoch) =>
       {
