@@ -32,6 +32,14 @@ case class SparseVector(private val vectorMap: Map[Int, Double]) {
 
   def -(other: SparseVector): SparseVector = this + (other * -1)
 
+  def /(other: SparseVector): SparseVector = {
+    val newMap = vectorMap.map {
+      case (key, value) => (key, value / other.vectorMap.getOrElse(key, 0.0))
+    }
+
+    SparseVector(newMap)
+  }
+
   def dot(vector: Vector[Double]): Double = {
     val newMap = vectorMap.map {
       case (key, value) => (key, vector(key) * value)
@@ -63,7 +71,7 @@ object SparseVector {
       .map(keyValuePair => {
         val key :: value :: _ = keyValuePair.split(":").toList
 
-        (key.toInt) -> value.toDouble
+        key.toInt -> value.toDouble
       })
       .toMap
 

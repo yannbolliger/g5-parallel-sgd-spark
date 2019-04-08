@@ -13,11 +13,8 @@ class SVM(
 
   private implicit def bool2double(b: Boolean): Double = if (b) 1.0 else -1.0
 
-  def isMisclassified(
-      vector: SparseVector,
-      weights: Vector[Double],
-      label: Boolean
-  ): Boolean = (vector dot weights) * label < 1
+  def predict(x: SparseVector, weights: Vector[Double]): Boolean =
+    (x dot weights) > 0
 
   def initialWeights: Vector[Double] =
     // also have a bias term: + 1
@@ -34,7 +31,7 @@ class SVM(
 
     val regularizer: Double = regularizerGradient(vector, weights)
 
-    if (isMisclassified(vector, weights, label))
+    if ((vector dot weights) * label < 1)
       vector * label - regularizer
     else
       // replace vector's components with -regularizer
@@ -51,30 +48,37 @@ class SVM(
       .mapValues { case (x, y) => gradient(x, weights, y) }
       .persist
 
-    //val batchSize = gradients.count.toDouble
-
     val averageGradient =
-      gradients.aggregate(SparseVector.empty)(_ + _._2, _ + _)
+      gradients
+        .aggregate(WeightedSparseVector.empty)(_ + _._2, _ + _)
+        .weightedAverageVector()
 
-    val newWeights = (averageGradient * learningRate) + weights
-
-    newWeights
+    (averageGradient * learningRate) + weights
   }
 
-  def predict(x: SparseVector, weights: Vector[Double]): Boolean =
-    (x dot weights) > 0
-
   def svmLoss(data: RDD[LabelledData], weights: Vector[Double]): Double =
-    (1.0 / data.count) * data
+    data
       .mapValues {
-        case (vector, label) => Math.max(0, 1 - ((vector dot weights) * label))
+        case (vector, label) => Math.max(0, 1 - label * (vector dot weights))
       }
       .aggregate(0.0)(_ + _._2, _ + _)
 
-  def regularizerLoss(weights: Vector[Double]): Double =
-    Settings.lambda * weights.map(w => w * w).sum
+  def regularizerLoss(
+      data: RDD[LabelledData],
+      weights: Vector[Double]
+  ): Double =
+    data
+      .mapValues {
+        case (vector, _) =>
+          lambda * vector.getNonZeroIndexes
+            .map(key => Math.pow(weights(key), 2))
+            .sum / vector.size
+      }
+      .aggregate(0.0)(_ + _._2, _ + _)
 
   def loss(data: RDD[LabelledData], weights: Vector[Double]): Double =
-    svmLoss(data, weights) + regularizerLoss(weights)
+    (1.0 / data.count) * (
+      svmLoss(data, weights) + regularizerLoss(data, weights)
+    )
 
 }

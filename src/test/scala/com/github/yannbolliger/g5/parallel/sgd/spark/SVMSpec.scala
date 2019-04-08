@@ -13,17 +13,17 @@ class SVMSpec extends FunSpec {
       (1, (SparseVector(Map(0 -> 1, 1 -> 100, 2 -> 2)), true)),
       (2, (SparseVector(Map(0 -> 1, 1 -> -100, 2 -> 3)), true)),
       (3, (SparseVector(Map(0 -> 1, 1 -> 10, 2 -> 0)), false)),
-      (4, (SparseVector(Map(0 -> 1, 1 -> -1000, 2 -> -1)), false))
+      (4, (SparseVector(Map(0 -> 1, 1 -> -1000, 2 -> -10)), false))
     )
 
-    it("gives loss 0 if examples are seperated") {
+    it("gives loss 0 if examples are separated") {
       val weights = Vector(-1.0, 0, 1)
       assert(svm.svmLoss(sc.parallelize(data), weights) === 0)
     }
 
-    it("gives loss 1 if everything false") {
-      val weights = Vector(0, 0, 0.0)
-      assert(svm.svmLoss(sc.parallelize(data), weights) === 1)
+    it("gives loss n if everything false (not normalised)") {
+      val weights = Vector(100, 0, 0.0)
+      assert(svm.svmLoss(sc.parallelize(data), weights) === 202)
     }
   }
 }
