@@ -10,12 +10,13 @@ import java.time.Instant
 class Logger(n_workers: Int, sync_epochs: Int) {
   val start_time: Long = System.currentTimeMillis()
   val losses_train: mutable.MutableList[Log] = mutable.MutableList()
-
+  val running_mode: String = "Spark"
   case class Log(time: String, loss_val: Double)
   case class Logs(
       start_time: String,
       end_time: String,
       running_time: String,
+      running_mode: String,
       n_workers: Int,
       sync_epochs: Int,
       accuracy_train: Double,
@@ -55,6 +56,7 @@ class Logger(n_workers: Int, sync_epochs: Int) {
       format_date(start_time),
       format_date(end_time),
       running_time.toString,
+      running_mode,
       n_workers,
       sync_epochs,
       accuracy_train,
@@ -81,7 +83,7 @@ class Logger(n_workers: Int, sync_epochs: Int) {
   def flush(logs: Logs): Unit = {
     val gson = new Gson
     val jsonString = gson.toJson(logs)
-    val pw = new PrintWriter(new File("logs.txt"))
+    val pw = new PrintWriter(new File("logs.json"))
     pw.write(jsonString)
     pw.close()
   }
