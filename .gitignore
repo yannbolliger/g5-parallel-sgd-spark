@@ -24,3 +24,4 @@ target
 data/
 rcv1/
 logs.txt
+.DS_Store

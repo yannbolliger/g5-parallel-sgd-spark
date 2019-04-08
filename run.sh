@@ -4,7 +4,7 @@
 # compile jar file
 #
 cd deploy
-sudo ./deploy.sh
+./deploy.sh
 
 # Run Kuberetes
 #sudo ./kubernetes.sh

@@ -50,7 +50,6 @@ kubectl delete pods $pod_name
 ./bin/spark-submit \
   --master k8s://https://10.90.36.16:6443 \
   --deploy-mode cluster \
-  --name pyspark-wc \
   --class "com.github.yannbolliger.g5.parallel.sgd.spark.ParallelSGDApp" \
   --conf spark.executor.instances=5 \
   --conf spark.kubernetes.namespace=$namespace \
