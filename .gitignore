@@ -1,7 +1,7 @@
 *.class
 *.log
 
-
+*/spark/*
 dist/*
 lib_managed/
 src_managed/
