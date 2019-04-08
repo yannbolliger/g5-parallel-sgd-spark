@@ -33,7 +33,7 @@ tag="${filename%.*}"
 
 # Move jar to spark folder and remove from 'target' folder
 cp target/scala-*/$filename deploy/spark/$filename
-rm target/scala-*/jar-*
+sbt clean
 
 cd deploy
 # Compute Dockerfile with filename (to speed-up deployment process)
