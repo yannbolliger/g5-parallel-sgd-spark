@@ -7,16 +7,19 @@ object DataHelper {
 
   type LabelledData = (Int, (SparseVector, Boolean))
 
-  def load(sc: SparkContext): (RDD[LabelledData], RDD[LabelledData]) = {
+  def load(
+      sc: SparkContext,
+      settings: Settings
+  ): (RDD[LabelledData], RDD[LabelledData]) = {
 
-    val fileNames = List(Settings.trainFileName, Settings.testFileNames)
-    val topicsDataRaw = sc.textFile(Settings.topicsFileName)
+    val fileNames = List(settings.trainFileName, settings.testFileNames)
+    val topicsDataRaw = sc.textFile(settings.topicsFileName)
 
     val idsLabels: RDD[(Int, Boolean)] = topicsDataRaw
       .map(line => {
         val topic :: id :: _ = line.split(" ").toList
 
-        (id.toInt, topic == Settings.topicKey)
+        (id.toInt, topic == settings.topicKey)
       })
       .reduceByKey(_ || _)
       .persist
@@ -25,7 +28,7 @@ object DataHelper {
       fileName =>
         sc.textFile(fileName)
           .map(SparseVector.fromStringWithBias)
-          .partitionBy(Settings.partitioner)
+          .partitionBy(settings.partitioner)
           .join(idsLabels)
     )
 
@@ -33,12 +36,13 @@ object DataHelper {
   }
 
   def trainValidationSplit(
-      data: RDD[LabelledData]
+      data: RDD[LabelledData],
+      settings: Settings
   ): (RDD[LabelledData], RDD[LabelledData]) = {
 
     val splitWeights = Array(
-      1 - Settings.validationSplit,
-      Settings.validationSplit
+      1 - settings.validationSplit,
+      settings.validationSplit
     )
 
     val Array(train, validation) = data.randomSplit(splitWeights)

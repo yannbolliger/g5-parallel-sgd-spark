@@ -1,13 +1,30 @@
-# g5-parallel-sgd-spark
+# Group 5 Parallel SGD on Spark
 
-Group 5 project for Systems for Data Science course @ EPFL, 2019.
+This project implements stochastic gradient descent for support vector machines
+(SVM) on Scala Spark. It was done for the course Systems for Data Science @
+EPFL, 2019.
 
+## Prerequisites
 
-### Run locally
+You need a running `bash`, `sbt` and `kubectl`.
+Download those with your favorite installer like `apt-get` on Ubuntu or `brew`
+on macOS.
 
-- Get the data from ...
-- Unpack them into `resources/rcv1/`
+The script will itself download and install spark in the folder `deploy`.d
 
+## Run locally
+
+- Get the data by executing `download-data.sh` in the folder `deploy`.
+
+```
+./run.sh -w local
+```
+
+## Run
+The `./run.sh` exposes three different parameters:
+
+- `-n` the number of executor instances that will be allocated
+-
 
 ### TODOs
 

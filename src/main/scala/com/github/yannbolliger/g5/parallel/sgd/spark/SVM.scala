@@ -1,8 +1,8 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
 
 import scala.language.implicitConversions
-import com.github.yannbolliger.g5.parallel.sgd.spark.DataHelper.LabelledData
 import org.apache.spark.rdd.RDD
+import DataHelper.LabelledData
 
 class SVM(
     learningRate: Double,

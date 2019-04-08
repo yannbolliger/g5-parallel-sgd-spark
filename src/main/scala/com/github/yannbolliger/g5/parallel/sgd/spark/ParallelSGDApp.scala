@@ -9,25 +9,29 @@ object ParallelSGDApp extends App {
   val sc = new SparkContext(sparkConf)
   sc.setLogLevel("OFF")
 
-  val (trainData, testData) = DataHelper.load(sc)
-  val (trainSet, validationSet) = DataHelper.trainValidationSplit(trainData)
+  val settings = new Settings(sc, args)
+
+  val (trainData, testData) = DataHelper.load(sc, settings)
+
+  val (trainSet, validationSet) =
+    DataHelper.trainValidationSplit(trainData, settings)
 
   testData.persist
   trainSet.persist
   validationSet.persist
 
-  val Logger = new Logger(Settings.numberWorkers, Settings.epochs)
+  val Logger = new Logger(settings.numberWorkers, settings.epochs)
 
   val svm = new SVM(
-    Settings.learningRate,
-    Settings.lambda,
-    Settings.batchFraction,
-    Settings.dimension
+    settings.learningRate,
+    settings.lambda,
+    settings.batchFraction,
+    settings.dimension
   )
 
   // TODO: early stopping
 
-  val finalWeight = (1 to Settings.epochs).foldLeft(svm.initialWeights) {
+  val finalWeight = (1 to settings.epochs).foldLeft(svm.initialWeights) {
     (weights, epoch) =>
       {
         val newWeights = svm.fitEpoch(trainSet, weights)

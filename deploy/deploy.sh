@@ -1,5 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
+
+NUMBER_WORKERS = $1
+SUBSET_SIZE = $2
+
+# name of the spark pod
+POD_NAME="spark-parallelsgdapp"
+
+# Our namespace
+NAMESPACE="cs449g5"
+
+# Docker hub repo
+REPO=jonathanbesomi
 
 # Download and unzip Apache Spark
 if ! ls spark* 1> /dev/null 2>&1; then
@@ -30,34 +42,30 @@ cd deploy
 cd spark
 # build and push dockerfile
 echo "build docker image ..."
-./bin/docker-image-tool.sh -f ./Dockerfile -t $tag -r jonathanbesomi build
+./bin/docker-image-tool.sh -f ./Dockerfile -t $tag -r $REPO build
 echo "push docker image ..."
-./bin/docker-image-tool.sh -r jonathanbesomi -t $tag push
+./bin/docker-image-tool.sh -r $REPO -t $tag push
 
 # remove Dockerfile and jar file
 rm *.jar
 rm Dockerfile
 
-# name of the spark pod
-pod_name="spark-parallelsgdapp"
-# Our namespace
-namespace="cs449g5"
 
 # Submit to Kubernetes
 # if exist, delete old 'pods'
-kubectl delete pods $pod_name
+kubectl delete pods $POD_NAME
 
 ./bin/spark-submit \
   --master k8s://https://10.90.36.16:6443 \
   --deploy-mode cluster \
   --class "com.github.yannbolliger.g5.parallel.sgd.spark.ParallelSGDApp" \
-  --conf spark.executor.instances=5 \
-  --conf spark.kubernetes.namespace=$namespace \
-  --conf spark.kubernetes.driver.pod.name=$pod_name \
-  --conf spark.kubernetes.driver.volumes.persistentVolumeClaim.myvolume.options.claimName=$namespace-scratch\
-  --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.myvolume.options.claimName=$namespace-scratch\
+  --conf spark.executor.instances=$N_WORKERS \
+  --conf spark.kubernetes.namespace=$NAMESPACE \
+  --conf spark.kubernetes.driver.pod.name=$POD_NAME \
+  --conf spark.kubernetes.driver.volumes.persistentVolumeClaim.myvolume.options.claimName=$NAMESPACE-scratch\
+  --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.myvolume.options.claimName=$NAMESPACE-scratch\
   --conf spark.kubernetes.driver.volumes.persistentVolumeClaim.myvolume.mount.path=/data \
   --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.myvolume.mount.path=/data \
-  --conf spark.kubernetes.container.image=jonathanbesomi/spark:$tag \
+  --conf spark.kubernetes.container.image=$REPO/spark:$tag \
   --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
-  local:///opt/code.jar
+  local:///opt/code.jar $SUBSET_SIZE

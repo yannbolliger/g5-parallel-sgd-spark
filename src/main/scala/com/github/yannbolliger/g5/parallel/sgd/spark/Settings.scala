@@ -1,7 +1,8 @@
 package com.github.yannbolliger.g5.parallel.sgd.spark
-import org.apache.spark.{HashPartitioner, Partitioner}
 
-object Settings {
+import org.apache.spark.{HashPartitioner, Partitioner, SparkContext}
+
+class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
 
   implicit def s2Bool: String => Boolean = _.toBoolean
   implicit def s2Int: String => Int = s => augmentString(s).toInt
@@ -16,7 +17,7 @@ object Settings {
   /**
     * Spark, system parameters
     */
-  val numberWorkers: Int = getFromEnvOrDefault("N_WORKERS", 4)
+  val numberWorkers: Int = sc.getConf.getInt("spark.executor.instances", 4)
 
   val partitioner: Partitioner = new HashPartitioner(2 * numberWorkers)
 
@@ -38,7 +39,9 @@ object Settings {
   /**
     * SGD parameters
     */
-  val batchFraction: Double = getFromEnvOrDefault("BATCH_FRACTION", 0.1)
+  val subsetSize: Int = if (args.size > 0) args(0) else 1000
+
+  val batchFraction: Double = subsetSize / 20000.0
 
   val validationSplit: Double = getFromEnvOrDefault("VALIDATION_SPLIT", 0.1)
 
