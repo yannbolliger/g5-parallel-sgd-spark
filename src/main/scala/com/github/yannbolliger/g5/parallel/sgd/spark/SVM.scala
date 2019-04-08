@@ -81,4 +81,9 @@ class SVM(
       svmLoss(data, weights) + regularizerLoss(data, weights)
     )
 
+  def acc(data: RDD[LabelledData], weights: Vector[Double]): Double =
+    data.mapValues{
+      case (vector, label) =>
+        if (predict(vector, weights) == label) 1.0 else 0.0
+    }.aggregate(0.0)(_ + _._2, _ + _) / data.count()
 }

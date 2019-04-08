@@ -33,16 +33,24 @@ object ParallelSGDApp extends App {
         val validationLoss = svm.loss(validationSet, newWeights)
 
         Logger.appendLoss(validationLoss)
-        println(s"======================\n\n$validationLoss\n\n===============")
 
+        println(s"======================\n\n$validationLoss\n\n===============")
         newWeights
       }
   }
 
-  // TODO: calculate all the test statistics
-  // with testData
+  // Statistics
+  val accuracy_test = svm.acc(testData, finalWeight)
+  val accuracy_train = svm.acc(trainSet, finalWeight)
+  val accuracy_val = svm.acc(validationSet, finalWeight)
+  val losses_val = svm.loss(validationSet, finalWeight)
 
-  Logger.finish()
+  Logger.finish(
+    accuracy_test=accuracy_test,
+    accuracy_train=accuracy_train,
+    accuracy_val=accuracy_val,
+    losses_val=losses_val
+  )
 
   sc.stop()
 }
