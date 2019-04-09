@@ -10,7 +10,7 @@ You need a running `bash`, `sbt` and `kubectl`.
 Download those with your favorite installer like `apt-get` on Ubuntu or `brew`
 on macOS.
 
-The script will itself download and install spark in the folder `deploy`.d
+The script will itself download and install spark in the folder `deploy`.
 
 ## Run locally
 
@@ -25,7 +25,7 @@ The `./run.sh` exposes three different parameters:
 
 - `-n` the number of executor instances that will be allocated
 - `-s` the subset size that is sampled by SGD
-- `-w` _where_ to run the program: `loca` or `cluster`.
+- `-w` _where_ to run the program: `local` or `cluster`.
 
 ## References
 
@@ -41,7 +41,7 @@ that we forked [here](https://github.com/kyleger/hogwild-python).
   - Parameters:
     - sync, async
     - number of workers: 1, 5, 10, 20
-    - subset size (batch fraction): 0.001, 0.1, 1
+    - subset size (batch fraction): 10, 100, 1000, 10'000
 
 - Run SparkSGD (same params, sync): Jonny
 
