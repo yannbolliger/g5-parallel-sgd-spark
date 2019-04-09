@@ -46,4 +46,16 @@ that we forked [here](https://github.com/kyleger/hogwild-python).
 
 - Run SparkSGD (same params, sync): Jonny
 
-- Start writing paper: Yann
+### Paper outline
+
+- Intro
+
+- Changes and critique to Hogwild (early stopping)
+
+- Spark implementation
+  - ...
+  - deploy Kubernetes
+
+- Results and Analysis
+
+- Conclusion
