@@ -65,7 +65,7 @@ class Logger(settings: Settings) {
     val jsonString = (new Gson).toJson(logs)
 
     val filename = settings.dataPath +
-      s"/logs_${new Date()}_n${settings.numberWorkers}_s${settings.subsetPerWorker}.json"
+      s"/logs/logs_${new Date()}_n${settings.numberWorkers}_s${settings.subsetPerWorker}.json"
 
     val pw = new PrintWriter(new File(filename))
     pw.write(jsonString)
