@@ -1,24 +1,11 @@
-#!/usr/bin/sh
+#!/usr/bin/env bash
 
-kind: Pod
-apiVersion: v1
-metadata:
-  name: demo-pod
-spec:
-  volumes:
-    - name: demo-storage
-      persistentVolumeClaim:
-       claimName: cs449-scratch
-  containers:
-    - name: demo-container
-      image: alpine
-      volumeMounts:
-        - mountPath: /data
-          name: demo-storage
-      stdin: true
-      tty: true
-      command: ["/bin/sh"]
+kubectl delete -f volume_pod.yaml
+kubectl create -f volume_pod.yaml
 
-kubectl create -f demo-pod
-kubectl attach -i -t demo-pod
-kubectl cp /data/*.json /logs.json
+sleep 2
+
+cd ..
+mkdir -p logs
+
+kubectl cp volume-pod:data/logs/ logs

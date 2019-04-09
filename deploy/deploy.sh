@@ -72,3 +72,6 @@ kubectl delete pods $POD_NAME
   --conf spark.kubernetes.container.image=$REPO/spark:$tag \
   --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
   local:///opt/code.jar $SUBSET_SIZE $N_EPOCH
+
+
+ ./download_log.sh
