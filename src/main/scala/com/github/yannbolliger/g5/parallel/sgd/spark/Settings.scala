@@ -35,24 +35,25 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
   val topicKey: String = getFromEnvOrDefault("TOPIC_KEY", "CCAT")
 
   val dimension: Int = 47236
+  val trainSize: Int = 23149
 
   /**
     * SGD parameters
     */
-  val subsetSize: Int = if (args.length > 0) args(0) else 1000
-
-  val batchFraction: Double = subsetSize / 20000.0
+  val subsetPerWorker: Int = if (args.length > 0) args(0) else 1000
+  val batchSize: Double = subsetPerWorker * numberWorkers
+  val batchFraction: Double = batchSize / trainSize
 
   val validationSplit: Double = getFromEnvOrDefault("VALIDATION_SPLIT", 0.1)
 
-  val epochs: Int = getFromEnvOrDefault("EPOCHS", 1000)
+  val epochs: Int = if (args.length > 0) args(1) else 1000
 
   val learningRate: Double = getFromEnvOrDefault(
     "LEARNING_RATE",
-    0.3 / numberWorkers.toDouble
+    0.03 / numberWorkers.toDouble
   )
 
   val lambda: Double = getFromEnvOrDefault("LAMBDA", 1E-5)
 
-  val earlyStoppingWindow: Int = 10
+  val earlyStoppingWindow: Int = 15
 }
