@@ -74,4 +74,4 @@ kubectl delete pods $POD_NAME
   local:///opt/code.jar $SUBSET_SIZE $N_EPOCH
 
 
- ./download_log.sh
+./download_log.sh
