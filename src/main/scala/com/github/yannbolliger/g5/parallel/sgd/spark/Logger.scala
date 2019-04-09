@@ -8,7 +8,7 @@ import scala.collection.mutable
 import java.time.Instant
 import java.util.Date
 
-class Logger(nWorkers: Int, sync_epochs: Int, subsetSize: Int) {
+class Logger(settings: Settings) {
   val start_time: Long = System.currentTimeMillis()
   val lossesVal: mutable.MutableList[Log] = mutable.MutableList()
   val running_mode: String = "Spark"
@@ -45,8 +45,8 @@ class Logger(nWorkers: Int, sync_epochs: Int, subsetSize: Int) {
       format_date(end_time),
       running_time.toString,
       running_mode,
-      nWorkers,
-      sync_epochs,
+      settings.numberWorkers,
+      settings.epochs,
       accuracy_train,
       accuracy_val,
       accuracy_test,
@@ -64,7 +64,8 @@ class Logger(nWorkers: Int, sync_epochs: Int, subsetSize: Int) {
   def flush(logs: Logs): Unit = {
     val jsonString = (new Gson).toJson(logs)
 
-    val filename = s"logs_${new Date()}_n${nWorkers}_s${subsetSize}.json"
+    val filename = settings.dataPath +
+      s"/logs_${new Date()}_n${settings.numberWorkers}_s${settings.subsetPerWorker}.json"
 
     val pw = new PrintWriter(new File(filename))
     pw.write(jsonString)
