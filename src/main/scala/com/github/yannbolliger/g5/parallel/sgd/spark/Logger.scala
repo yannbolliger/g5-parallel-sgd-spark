@@ -64,7 +64,10 @@ class Logger(nWorkers: Int, sync_epochs: Int, subsetSize: Int) {
   def flush(logs: Logs): Unit = {
     val jsonString = (new Gson).toJson(logs)
 
+
     val filename = s"logs_${new Date()}_n${nWorkers}_s${subsetSize}.json"
+    println("save filename: ")
+    println(filename)
 
     val pw = new PrintWriter(new File(filename))
     pw.write(jsonString)

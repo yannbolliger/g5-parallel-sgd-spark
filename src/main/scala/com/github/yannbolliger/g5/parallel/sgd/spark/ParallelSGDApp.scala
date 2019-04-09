@@ -23,7 +23,7 @@ object ParallelSGDApp extends App {
   val Logger = new Logger(
     settings.numberWorkers,
     settings.epochs,
-    settings.subsetSize
+    settings.subsetPerWorker
   )
 
   val svm = new SVM(

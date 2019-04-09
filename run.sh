@@ -2,7 +2,7 @@
 
 # parse arguments
 
-while getopts ":n:s:w:" opt; do
+while getopts ":n:s:w:e:" opt; do
   case $opt in
     # number of workers
     n) N_WORKERS="$OPTARG";;
@@ -15,6 +15,7 @@ while getopts ":n:s:w:" opt; do
 
     # number of epoch
     e) N_EPOCH="$OPTARG";;
+
     \?) echo "Invalid option provided -$OPTARG" >&2
     ;;
   esac
