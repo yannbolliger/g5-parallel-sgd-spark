@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-set -e
+#set -e
 
-NUMBER_WORKERS = $1
-SUBSET_SIZE = $2
+N_WORKERS=$1
+SUBSET_SIZE=$2
+N_EPOCH=$3
 
 # name of the spark pod
 POD_NAME="spark-parallelsgdapp"
@@ -62,10 +63,16 @@ kubectl delete pods $POD_NAME
   --conf spark.executor.instances=$N_WORKERS \
   --conf spark.kubernetes.namespace=$NAMESPACE \
   --conf spark.kubernetes.driver.pod.name=$POD_NAME \
+  --conf spark.executor.memory=4g \
+  --conf spark.driver.memory=4g \
   --conf spark.kubernetes.driver.volumes.persistentVolumeClaim.myvolume.options.claimName=$NAMESPACE-scratch\
   --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.myvolume.options.claimName=$NAMESPACE-scratch\
   --conf spark.kubernetes.driver.volumes.persistentVolumeClaim.myvolume.mount.path=/data \
   --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.myvolume.mount.path=/data \
   --conf spark.kubernetes.container.image=$REPO/spark:$tag \
   --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
-  local:///opt/code.jar $SUBSET_SIZE
+  local:///opt/code.jar $SUBSET_SIZE $N_EPOCH
+
+
+
+  # kubectl exec spark-parallelsgdapp -i -t /bin/sh
