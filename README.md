@@ -10,7 +10,7 @@ You need a running `bash`, `sbt` and `kubectl`.
 Download those with your favorite installer like `apt-get` on Ubuntu or `brew`
 on macOS.
 
-The script will itself download and install spark in the folder `deploy`.
+The script will itself download and install Spark 2.4 in the folder `deploy`.
 
 ## Run locally
 
@@ -34,8 +34,6 @@ implementation by [`liabifano`](https://github.com/liabifano/hogwild-python)
 that we forked [here](https://github.com/kyleger/hogwild-python).
 
 ### TODOs
-
-- Tune learning rate for different batch fractions: Kyle
 
 - Run hogwild-python: Kyle
   - Parameters:

@@ -55,5 +55,7 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
 
   val lambda: Double = getFromEnvOrDefault("LAMBDA", 1E-5)
 
-  val earlyStoppingWindow: Int = 15
+  val earlyStoppingWindow: Int = 50
+
+  val epsilon: Double = 0.01
 }

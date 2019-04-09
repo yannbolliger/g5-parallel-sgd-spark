@@ -20,11 +20,7 @@ object ParallelSGDApp extends App {
   trainSet.persist
   validationSet.persist
 
-  val Logger = new Logger(
-    settings.numberWorkers,
-    settings.epochs,
-    settings.subsetPerWorker
-  )
+  val Logger = new Logger(settings)
 
   val svm = new SVM(
     settings.learningRate,
@@ -38,12 +34,7 @@ object ParallelSGDApp extends App {
       .foldLeft((svm.initialWeights, List.empty[Double])) {
 
         case ((weights, losses), epoch) =>
-          val lastLosses = losses.take(settings.earlyStoppingWindow)
-
-          // if last losses are all equal we skip the iteration
-          if (lastLosses.size > settings.earlyStoppingWindow &&
-              lastLosses.forall(_ == lastLosses.head))
-            (weights, losses)
+          if (isEarlyStoppingCriterionReached(losses)) (weights, losses)
 
           // otherwise calculate next epoch
           else {
@@ -64,4 +55,17 @@ object ParallelSGDApp extends App {
   )
 
   sc.stop()
+
+  def isEarlyStoppingCriterionReached(losses: List[Double]): Boolean =
+    if (losses.size < 2 * settings.earlyStoppingWindow) false
+    else {
+      val recentWindow = losses.take(settings.earlyStoppingWindow)
+      val oldWindow = losses
+        .slice(settings.earlyStoppingWindow, 2 * settings.earlyStoppingWindow)
+
+      val recentAverage = recentWindow.sum / recentWindow.size
+      val oldAverage = oldWindow.sum / oldWindow.size
+
+      oldAverage - recentAverage < settings.epsilon
+    }
 }
