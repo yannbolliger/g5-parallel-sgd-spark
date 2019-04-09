@@ -24,7 +24,10 @@ The script will itself download and install Spark 2.4 in the folder `deploy`.
 The `./run.sh` exposes three different parameters:
 
 - `-n` the number of executor instances that will be allocated
-- `-s` the subset size that is sampled by SGD
+- `-s` the subset size that is sampled by SGD (must set `-n` if you're running
+on the cluster and want to set this)
+- `-e` the number of epochs the algorithm is maximally run (must set `-s` if you
+ want to set this)
 - `-w` _where_ to run the program: `local` or `cluster`.
 
 ## References
