@@ -24,14 +24,18 @@ The script will itself download and install spark in the folder `deploy`.d
 The `./run.sh` exposes three different parameters:
 
 - `-n` the number of executor instances that will be allocated
--
+- `-s` the subset size that is sampled by SGD
+- `-w` _where_ to run the program: `loca` or `cluster`.
+
+## References
+
+This project is based on the excellent work of the `hogwild-python`
+implementation by [`liabifano`](https://github.com/liabifano/hogwild-python)
+that we forked [here](https://github.com/kyleger/hogwild-python).
 
 ### TODOs
 
 - Tune learning rate for different batch fractions: Kyle
-
-- Clone the hogwild-python: Kyle
-  - apply changes
 
 - Run hogwild-python: Kyle
   - Parameters:

@@ -20,7 +20,11 @@ object ParallelSGDApp extends App {
   trainSet.persist
   validationSet.persist
 
-  val Logger = new Logger(settings.numberWorkers, settings.epochs)
+  val Logger = new Logger(
+    settings.numberWorkers,
+    settings.epochs,
+    settings.subsetSize
+  )
 
   val svm = new SVM(
     settings.learningRate,
@@ -56,8 +60,7 @@ object ParallelSGDApp extends App {
   Logger.finish(
     accuracy_test = svm.accuracy(testData, finalWeight),
     accuracy_train = svm.accuracy(trainSet, finalWeight),
-    accuracy_val = svm.accuracy(validationSet, finalWeight),
-    losses_val = svm.loss(validationSet, finalWeight)
+    accuracy_val = svm.accuracy(validationSet, finalWeight)
   )
 
   sc.stop()
