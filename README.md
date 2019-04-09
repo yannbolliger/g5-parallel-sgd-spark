@@ -35,8 +35,6 @@ that we forked [here](https://github.com/kyleger/hogwild-python).
 
 ### TODOs
 
-- Tune learning rate for different batch fractions: Kyle
-
 - Run hogwild-python: Kyle
   - Parameters:
     - sync, async
