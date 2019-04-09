@@ -12,7 +12,7 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
       key: String,
       default: A
   )(implicit convert: String => A): A =
-    sys.env.get(key).map(convert(_)).getOrElse(default)
+    sys.env.get(key).map(convert).getOrElse(default)
 
   /**
     * Spark, system parameters
@@ -27,6 +27,10 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
     * Data parameters
     */
   val dataPath: String = getFromEnvOrDefault("DATA_PATH", "resources/rcv1")
+
+  val logPath: String =
+    if (sys.env.get("DATA_PATH").isDefined) "/data/logs"
+    else "resources/logs"
 
   val trainFileName: String = dataPath + "/lyrl2004_vectors_train.dat"
   val testFileNames: String = dataPath + "/lyrl2004_vectors_test_pt*.dat"
@@ -46,7 +50,7 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
 
   val validationSplit: Double = getFromEnvOrDefault("VALIDATION_SPLIT", 0.1)
 
-  val epochs: Int = if (args.length > 0) args(1) else 1000
+  val epochs: Int = if (args.length > 1) args(1) else 1000
 
   val learningRate: Double = getFromEnvOrDefault(
     "LEARNING_RATE",
@@ -55,7 +59,7 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
 
   val lambda: Double = getFromEnvOrDefault("LAMBDA", 1E-5)
 
-  val earlyStoppingWindow: Int = 50
+  val earlyStoppingWindow: Int = 20
 
   val epsilon: Double = 0.01
 }

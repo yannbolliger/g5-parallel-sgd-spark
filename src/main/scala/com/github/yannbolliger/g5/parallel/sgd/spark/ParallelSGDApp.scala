@@ -48,7 +48,10 @@ object ParallelSGDApp extends App {
           }
       }
 
+  val end_time = System.currentTimeMillis()
+
   Logger.finish(
+    end_time = end_time,
     accuracy_test = svm.accuracy(testData, finalWeight),
     accuracy_train = svm.accuracy(trainSet, finalWeight),
     accuracy_val = svm.accuracy(validationSet, finalWeight)

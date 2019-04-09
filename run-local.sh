@@ -9,5 +9,6 @@ sbt package
 spark-submit \
     --class "com.github.yannbolliger.g5.parallel.sgd.spark.ParallelSGDApp" \
     --master local[*] \
-    target/scala-2.11/*.jar $1
+    target/scala-2.11/*.jar \
+    $1 $2
 
