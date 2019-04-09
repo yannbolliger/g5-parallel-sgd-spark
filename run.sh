@@ -26,6 +26,6 @@ then
     cd deploy && ./deploy.sh $N_WORKERS $SUBSET_SIZE $N_EPOCH
     exit 0
 else
-    ./run-local.sh $SUBSET_SIZE
+    ./run-local.sh $SUBSET_SIZE $N_EPOCH
     exit 0
 fi;
