@@ -46,7 +46,7 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
     */
   val subsetPerWorker: Int = if (args.length > 0) args(0) else 1000
   val batchSize: Double = subsetPerWorker * numberWorkers
-  val batchFraction: Double = batchSize / trainSize
+  val batchFraction: Double = Math.max(1, batchSize / trainSize)
 
   val validationSplit: Double = getFromEnvOrDefault("VALIDATION_SPLIT", 0.1)
 
