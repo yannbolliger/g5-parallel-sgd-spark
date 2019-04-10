@@ -5,13 +5,15 @@ import org.apache.spark.{HashPartitioner, Partitioner, SparkContext}
 class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
 
   implicit def s2Bool: String => Boolean = _.toBoolean
+
   implicit def s2Int: String => Int = s => augmentString(s).toInt
+
   implicit def s2Double: String => Double = s => augmentString(s).toDouble
 
   def getFromEnvOrDefault[A](
-      key: String,
-      default: A
-  )(implicit convert: String => A): A =
+                              key: String,
+                              default: A
+                            )(implicit convert: String => A): A =
     sys.env.get(key).map(convert).getOrElse(default)
 
   /**
@@ -44,19 +46,20 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
   /**
     * SGD parameters
     */
-  val subsetPerWorker: Int = if (args.length > 0) args(0) else 1000
+  val subsetPerWorker: Int = args(0)
+
   val batchSize: Double = subsetPerWorker * numberWorkers
-  val batchFraction: Double = Math.max(1, batchSize / trainSize)
+
+  val batchFraction: Double = Math.min(1, batchSize / trainSize)
 
   val validationSplit: Double = getFromEnvOrDefault("VALIDATION_SPLIT", 0.1)
 
-  val epochs: Int = if (args.length > 1) args(1) else 1000
+  val epochs: Int = args(1)
 
   val learningRate: Double = getFromEnvOrDefault(
     "LEARNING_RATE",
-    0.03 / numberWorkers.toDouble
+    0.3 * Math.max(1, Math.min(3, batchSize / 500))
   )
-
   val lambda: Double = getFromEnvOrDefault("LAMBDA", 1E-5)
 
   val earlyStoppingWindow: Int = 20
