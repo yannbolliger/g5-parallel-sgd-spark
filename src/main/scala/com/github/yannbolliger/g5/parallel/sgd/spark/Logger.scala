@@ -70,6 +70,8 @@ class Logger(settings: Settings) {
     val filename = settings.logPath +
       s"/logs_${date}_n${settings.numberWorkers}_s${settings.subsetPerWorker}.json"
 
+    println("saved logs: ", filename)
+
     val pw = new PrintWriter(new File(filename))
     pw.write(jsonString)
     pw.close()

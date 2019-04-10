@@ -39,7 +39,7 @@ that we forked [here](https://github.com/kyleger/hogwild-python).
   - Parameters:
     - sync, async
     - number of workers: 1, 5, 10, 20
-    - subset size (batch fraction): 10, 100, 1000, 10'000
+    - subset size (batch fraction): 50, 100, 1000, 10'000
 
 - Run SparkSGD (same params, sync): Jonny
 

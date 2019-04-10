@@ -10,7 +10,6 @@ object ParallelSGDApp extends App {
   sc.setLogLevel("OFF")
 
   val settings = new Settings(sc, args)
-
   val (trainData, testData) = DataHelper.load(sc, settings)
 
   val (trainSet, validationSet) =
@@ -49,6 +48,8 @@ object ParallelSGDApp extends App {
       }
 
   val end_time = System.currentTimeMillis()
+
+  println("computing logs files ...")
 
   Logger.finish(
     end_time = end_time,

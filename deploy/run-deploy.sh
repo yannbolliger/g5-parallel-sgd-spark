@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 #set -e
 
+# Set args
 N_WORKERS=$1
 SUBSET_SIZE=$2
 N_EPOCH=$3
-
-# name of the spark pod
-POD_NAME="spark-parallelsgdapp"
+POD_NAME=$4
 
 # Our namespace
 NAMESPACE="cs449g5"
@@ -32,7 +31,7 @@ target_folder=target/scala-*/jar-*
 filename=$(basename $target_folder)
 tag="${filename%.*}"
 
-# Move jar to spark folder and remove from 'target' folder
+# Move compiled jar to spark folder
 cp target/scala-*/$filename deploy/spark/$filename
 sbt clean
 
@@ -47,15 +46,11 @@ echo "build docker image ..."
 echo "push docker image ..."
 ./bin/docker-image-tool.sh -r $REPO -t $tag push
 
-# remove Dockerfile and jar file
+# remove Dockerfile and jar file from 'spark folder'
 rm *.jar
 rm Dockerfile
 
-
-# Submit to Kubernetes
-# if exist, delete old 'pods'
-kubectl delete pods $POD_NAME
-
+echo "start ..."
 ./bin/spark-submit \
   --master k8s://https://10.90.36.16:6443 \
   --deploy-mode cluster \
@@ -74,4 +69,14 @@ kubectl delete pods $POD_NAME
   local:///opt/code.jar $SUBSET_SIZE $N_EPOCH
 
 
-./download_log.sh
+# Submit to Kubernetes
+cmd=$(kubectl get pods | grep $POD_NAME | grep "Completed")
+if [ "$cmd" ];
+then
+      echo "Execution completed!"
+else
+      echo "FAILED N_WORKERS=$1, SUBSET_SIZE=$2, N_EPOCH=$3, POD_NAME=$4"> status.txt
+fi
+
+
+kubectl delete pods $POD_NAME
