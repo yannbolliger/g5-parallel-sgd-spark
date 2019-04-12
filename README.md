@@ -45,17 +45,3 @@ that we forked [here](https://github.com/kyleger/hogwild-python).
     - subset size (batch fraction): 50, 100, 1000, 10'000
 
 - Run SparkSGD (same params, sync): Jonny
-
-### Paper outline
-
-- Intro
-
-- Changes and critique to Hogwild (early stopping)
-
-- Spark implementation
-  - ...
-  - deploy Kubernetes
-
-- Results and Analysis
-
-- Conclusion
