@@ -36,12 +36,11 @@ This project is based on the excellent work of the `hogwild-python`
 implementation by [`liabifano`](https://github.com/liabifano/hogwild-python)
 that we forked [here](https://github.com/kyleger/hogwild-python).
 
-### TODOs
+## Parameters for experiments
 
-- Run hogwild-python: Kyle
-  - Parameters:
-    - sync, async
-    - number of workers: 1, 5, 10, 20
-    - subset size (batch fraction): 50, 100, 1000, 10'000
+- hogwild-python Parameters:
+  - sync, async
+  - number of workers: 1, 5, 10, 20
+  - subset size (batch fraction): 50, 100, 1000, 10'000
 
-- Run SparkSGD (same params, sync): Jonny
+- SparkSGD: (same params, only sync)

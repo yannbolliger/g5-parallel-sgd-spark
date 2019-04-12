@@ -22,7 +22,7 @@ if ! ls spark* 1> /dev/null 2>&1; then
       rm *.tgz
 fi
 
-echo "compile jar file ..."
+echo "Compile jar file ..."
 cd ..
 sbt package
 
@@ -41,16 +41,16 @@ cd deploy
 
 cd spark
 # build and push dockerfile
-echo "build docker image ..."
+echo "Build docker image ..."
 ./bin/docker-image-tool.sh -f ./Dockerfile -t $tag -r $REPO build
-echo "push docker image ..."
+echo "Push docker image ..."
 ./bin/docker-image-tool.sh -r $REPO -t $tag push
 
 # remove Dockerfile and jar file from 'spark folder'
 rm *.jar
 rm Dockerfile
 
-echo "start ..."
+echo "Start ..."
 ./bin/spark-submit \
   --master k8s://https://10.90.36.16:6443 \
   --deploy-mode cluster \
