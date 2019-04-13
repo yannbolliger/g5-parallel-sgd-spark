@@ -41,7 +41,7 @@ else
       if ! ls ./resources/rcv1 1> /dev/null 2>&1;
       then
             echo "download dataset ..."
-            ./download_log.sh
+            ./download_data.sh
       else
             echo "dataset already present, skip download."
       fi
