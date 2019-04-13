@@ -37,6 +37,15 @@ then
       exit 0
 else
       echo "run locally ..."
+
+      if ! ls ./resources/rcv1 1> /dev/null 2>&1;
+      then
+            echo "download dataset ..."
+            ./download_log.sh
+      else
+            echo "dataset already present, skip download."
+      fi
+
       # build app
       sbt clean
       sbt package

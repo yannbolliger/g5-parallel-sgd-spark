@@ -12,50 +12,36 @@ on macOS.
 
 The script will itself download and install Spark 2.4 in the folder `deploy`.
 
-## Run locally
+## Download the data locally
 
-- Get the data by executing `download-data.sh` in the folder `deploy`.
+To run the code locally, the dataset need to be downloaded. You can use this script to download the data.
+
+In case of running the code on Kubernetes cluster, it's not necessary download the data, since the complete dataset is already present in a PersistentVolume.
 
 ```
-./run.sh -w local
+./download-data.sh
 ```
 
 ## Run
-The `./run.sh` exposes three different parameters:
 
-- `-n` the number of executor instances that will be allocated
-- `-s` the subset size that is sampled by SGD (must set `-n` if you're running
-on the cluster and want to set this)
-- `-e` the number of epochs the algorithm is maximally run (must set `-s` if you
- want to set this)
-- `-w` _where_ to run the program: `local` or `cluster`.
+The `./run.sh` exposes 5 different parameters:
+
+- `-w` _where_ to run the program: `local` or in the `cluster`. [default local]
+- `-n` the number of executor instances that will be allocated [default 5]
+- `-s` the subset size that is sampled by SGD [default 1000]
+- `-e` the number of epochs the algorithm is maximally run [default 1000]
+- `-p` the name of the executed pod on Kubernetes [default pod]
+
+for example
+
+```
+./run.sh -w cluster -n 5 -s 50 -e 1000 -p mypod
+```
+run the code on cluster, with 5 workers, 50 subeset size, 1000 epochs and 'mypod' as pod name.
+
 
 ## References
 
 This project is based on the excellent work of the `hogwild-python`
 implementation by [`liabifano`](https://github.com/liabifano/hogwild-python)
 that we forked [here](https://github.com/kyleger/hogwild-python).
-
-### TODOs
-
-- Run hogwild-python: Kyle
-  - Parameters:
-    - sync, async
-    - number of workers: 1, 5, 10, 20
-    - subset size (batch fraction): 50, 100, 1000, 10'000
-
-- Run SparkSGD (same params, sync): Jonny
-
-### Paper outline
-
-- Intro
-
-- Changes and critique to Hogwild (early stopping)
-
-- Spark implementation
-  - ...
-  - deploy Kubernetes
-
-- Results and Analysis
-
-- Conclusion

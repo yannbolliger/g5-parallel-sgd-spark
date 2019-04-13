@@ -3,7 +3,6 @@
 # Download data files on resource_rcv1_path
 
 resource_rcv1_path=./resources/rcv1
-
 mkdir -p $resource_rcv1_path && cd $resource_rcv1_path
 
 curl -O "http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/a13-vector-files/lyrl2004_vectors_test_pt0.dat.gz"

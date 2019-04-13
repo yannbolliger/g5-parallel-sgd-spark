@@ -4,7 +4,7 @@ N_EPOCH=1000
 
 for N_WORKERS in 5 10 20
 do
-      for SUBSET_SIZE in 50 100 1000 10000
+      for SUBSET_SIZE in 50 100 1000
       do
             POD_NAME="worker-$N_WORKERS-subset-$SUBSET_SIZE"
             echo "RUN $POD_NAME"
