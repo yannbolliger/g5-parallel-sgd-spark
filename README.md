@@ -7,10 +7,10 @@ EPFL, 2019.
 ## Prerequisites
 
 You need a running `bash`, `sbt` and `kubectl`.
-Download these with your favorite installer like `apt-get` on Ubuntu or
-`brew` on macOS.
-You also need version 2.4 of
-Spark to be installed [get it here](https://spark.apache.org/downloads.html).
+Download those with your favorite installer like `apt-get` on Ubuntu or `brew`
+on macOS.
+
+The script will itself download and install Spark 2.4 in the folder `deploy`.
 
 
 ## Download the data locally
