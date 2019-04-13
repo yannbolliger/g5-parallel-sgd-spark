@@ -21,7 +21,6 @@ object ParallelSGDApp extends App {
 
   val Logger = new Logger(settings)
 
-  println("New run ...")
 
   val svm = new SVM(
     settings.learningRate,
