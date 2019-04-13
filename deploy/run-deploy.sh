@@ -13,7 +13,14 @@ NAMESPACE="cs449g5"
 # Docker hub repo
 REPO=jonathanbesomi
 
-mkdir -p spark
+# Download and unzip Apache Spark
+if ! ls spark* 1> /dev/null 2>&1; then
+      echo "download Apache Spark ..."
+      curl -O "http://mirror.easyname.ch/apache/spark/spark-2.4.1/spark-2.4.1-bin-hadoop2.7.tgz"
+      tar -xvzf *.tgz
+      mv spark-2.4.1-bin-hadoop2.7 spark
+      rm *.tgz
+fi
 
 echo "Compile jar file ..."
 cd ..
@@ -35,16 +42,16 @@ cd deploy
 cd spark
 # build and push dockerfile
 echo "Build docker image ..."
-docker-image-tool.sh -f ./Dockerfile -t $tag -r $REPO build
+./bin/docker-image-tool.sh -f ./Dockerfile -t $tag -r $REPO build
 echo "Push docker image ..."
-docker-image-tool.sh -r $REPO -t $tag push
+./bin/docker-image-tool.sh -r $REPO -t $tag push
 
 # remove Dockerfile and jar file from 'spark folder'
 rm *.jar
 rm Dockerfile
 
 echo "Start ..."
-spark-submit \
+./bin/spark-submit \
   --master k8s://https://10.90.36.16:6443 \
   --deploy-mode cluster \
   --class "com.github.yannbolliger.g5.parallel.sgd.spark.ParallelSGDApp" \
