@@ -32,7 +32,7 @@ done
 
 if [[ $WHERE = "cluster" ]];
 then
-      echo "deploy on cluster ..."
+      echo "Deploy on cluster ..."
       cd deploy && ./run-deploy.sh $N_WORKERS $SUBSET_SIZE $N_EPOCH $POD_NAME
       exit 0
 else

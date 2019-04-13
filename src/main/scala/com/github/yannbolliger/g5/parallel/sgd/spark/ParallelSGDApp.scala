@@ -21,7 +21,7 @@ object ParallelSGDApp extends App {
 
   val Logger = new Logger(settings)
 
-  println("nuovo!")
+  println("New run ...")
 
   val svm = new SVM(
     settings.learningRate,
@@ -51,7 +51,7 @@ object ParallelSGDApp extends App {
 
   val end_time = System.currentTimeMillis()
 
-  println("computing logs files ...")
+  println("Computing logs files ...")
 
   Logger.finish(
     end_time = end_time,

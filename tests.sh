@@ -14,4 +14,4 @@ do
 done
 
 wait
-echo "finish."
+echo "Finish."
