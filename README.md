@@ -7,20 +7,26 @@ EPFL, 2019.
 ## Prerequisites
 
 You need a running `bash`, `sbt` and `kubectl`.
-Download those with your favorite installer like `apt-get` on Ubuntu or `brew`
-on macOS.
+Download these with your favorite installer like `apt-get` on Ubuntu or
+`brew` on macOS.
+You also need version 2.4 of
+Spark to be installed [get it here](https://spark.apache.org/downloads.html).
 
-The script will itself download and install Spark 2.4 in the folder `deploy`.
 
 ## Download the data locally
 
-To run the code locally, the dataset need to be downloaded. You can use this script to download the data.
-
-In case of running the code on Kubernetes cluster, it's not necessary download the data, since the complete dataset is already present in a PersistentVolume.
+To run the code locally, the data set needs to be downloaded. You can use this
+script to download the data.
 
 ```
 ./download-data.sh
 ```
+
+In case you want to run the code on a Kubernetes cluster,
+it's not necessary to download the data, since the complete data set already
+needs to be present in a PersistentVolume.
+
+
 
 ## Run
 
@@ -32,12 +38,13 @@ The `./run.sh` exposes 5 different parameters:
 - `-e` the number of epochs the algorithm is maximally run [default 1000]
 - `-p` the name of the executed pod on Kubernetes [default pod]
 
-for example
+For example:
 
 ```
 ./run.sh -w cluster -n 5 -s 50 -e 1000 -p mypod
 ```
-run the code on cluster, with 5 workers, 50 subeset size, 1000 epochs and 'mypod' as pod name.
+runs the code on the cluster, with 5 workers, subset size 50, 1000 epochs and
+'mypod' as pod name.
 
 
 ## References

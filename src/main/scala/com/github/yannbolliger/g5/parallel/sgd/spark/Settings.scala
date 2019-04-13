@@ -11,9 +11,9 @@ class Settings(sc: SparkContext, args: Array[String]) extends Serializable {
   implicit def s2Double: String => Double = s => augmentString(s).toDouble
 
   def getFromEnvOrDefault[A](
-                              key: String,
-                              default: A
-                            )(implicit convert: String => A): A =
+      key: String,
+      default: A
+  )(implicit convert: String => A): A =
     sys.env.get(key).map(convert).getOrElse(default)
 
   /**
